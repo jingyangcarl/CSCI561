@@ -125,6 +125,7 @@
   <ItemGroup>
     <ClCompile Include="BFSProcessor.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Utility.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="input.txt" />

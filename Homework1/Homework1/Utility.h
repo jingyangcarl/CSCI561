@@ -1,21 +1,24 @@
 #pragma once
 #include <string>
-#include <unordered_map>
+#include <map>
+#include <vector>
 using namespace std;
 
-typedef struct Coordination {
-public:
-	int x = 0;
-	int y = 0;
-} Location;
+typedef pair<int, int> Location;
 
 typedef struct InputParameter {
+public:
 	string algorithm = "";
 	int height = 0;
 	int width = 0;
 	Location landingLocation;
 	int maxSlope = 0;
 	int destinationCount = 0;
-	unordered_map<int, Location> destinations;
+	map<Location, vector<Location>> destinations;
 	int** map = NULL;
+
+public:
+	int GetZ(int i, int j);
+	int GetZ(Location& location);
+	int GetSlopeBetween(Location& location1, Location& location2);
 } Input;

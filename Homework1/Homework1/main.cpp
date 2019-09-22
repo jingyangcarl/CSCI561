@@ -42,7 +42,7 @@ int main() {
 
 		// get landing location;
 		PrepareNextLine(lineBuffer, inputFile);
-		if (!(lineBuffer >> input.landingLocation.x >> input.landingLocation.y)) return -2;
+		if (!(lineBuffer >> input.landingLocation.first >> input.landingLocation.second)) return -2;
 
 		// get maximum slope for the rover;
 		PrepareNextLine(lineBuffer, inputFile);
@@ -56,8 +56,8 @@ int main() {
 		for (int i = 0; i < input.destinationCount; i++) {
 			Location destination;
 			PrepareNextLine(lineBuffer, inputFile);
-			if (!(lineBuffer >> destination.x >> destination.y)) return -5;
-			input.destinations.insert(pair<int, Location>(i, destination));
+			if (!(lineBuffer >> destination.first >> destination.second)) return -5;
+			input.destinations.insert(pair<Location, vector<Location>>(destination, vector<Location>(input.height * input.width)));
 		}
 
 		// get all z values on map;
@@ -75,4 +75,11 @@ int main() {
 	// run algorithm;
 	BFSProcessor processor(input);
 	processor.run();
+
+	for (auto i = input.destinations.begin(); i != input.destinations.end(); i++) {
+		for (auto j = (*i).second.begin(); j != (*i).second.end(); j++) {
+			cout << "(" << (*j).first << ", " << (*j).second << ")";
+		}
+		cout << endl;
+	}
 }
