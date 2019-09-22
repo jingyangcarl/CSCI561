@@ -76,6 +76,7 @@ int main() {
 	BFSProcessor processor(input);
 	processor.run();
 
+	cout << endl;
 	for (auto i = input.destinations.begin(); i != input.destinations.end(); i++) {
 		for (auto j = (*i).second.begin(); j != (*i).second.end(); j++) {
 			cout << "(" << (*j).first << ", " << (*j).second << ")";
