@@ -2,7 +2,9 @@
 #include <sstream>
 #include <fstream>
 #include <string>
+#include <ctime>
 #include "Utility.h"
+#include "InputGenerator.h"
 #include "BFSProcessor.h"
 using namespace std;
 
@@ -72,11 +74,20 @@ int main() {
 	}
 	inputFile.close();
 
+	// generate input;
+	InputGenerator inputGenerator(input);
+	inputGenerator.SetParameter(10, 10, 4, 50, 10);
+	inputGenerator.Generate();
+	inputGenerator.Output();
+
 	// run algorithm;
+	clock_t start = clock();
 	BFSProcessor processor(input);
 	processor.run();
-
-	cout << endl;
+	clock_t end = clock();
+	cout << "Running time: " << (end - start) / (double)CLOCKS_PER_SEC << endl;
+	
+	cout << "Trace: " << endl;
 	for (auto i = input.destinations.begin(); i != input.destinations.end(); i++) {
 		for (auto j = (*i).second.begin(); j != (*i).second.end(); j++) {
 			cout << "(" << (*j).first << ", " << (*j).second << ")";
