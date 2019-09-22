@@ -7,7 +7,6 @@ class BFSProcessor {
 public:
 	BFSProcessor(Input& input);
 	void run();
-	void BreadFirstSearch(Location currentLoc, map<Location, int>& path);
 	void BreadFirstSearch(const Location& targetLoc, Location currentLoc, map<Location, int>& path);
 	vector<Location>& GetPath(Location& destination);
 
