@@ -130,7 +130,8 @@
     <ClCompile Include="Utility.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <Text Include="input.txt" />
+    <Text Include="Input1.txt" />
+    <Text Include="Input2.txt" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BFSProcessor.h" />

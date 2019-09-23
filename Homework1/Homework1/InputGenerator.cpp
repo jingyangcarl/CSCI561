@@ -50,12 +50,12 @@ void InputGenerator::Generate() {
 
 void InputGenerator::Output() {
 	// landing position;
-	cout << "Landing Position: " << "(" << input.landingLocation.first << ", " << input.landingLocation.second << ")" << endl;
+	cout << "Landing Position: " << "(" << input.landingLocation.second << ", " << input.landingLocation.first << ")" << endl;
 
 	// landing destinations;
 	int count(0);
 	for (auto i = input.destinations.begin(); i != input.destinations.end(); i++) {
-		cout << "Destination[" << count << "]" << "(" << (*i).first.first << ", " << (*i).first.second << ")" << endl;
+		cout << "Destination[" << count << "]" << "(" << (*i).first.second << ", " << (*i).first.first << ")" << endl;
 		count++;
 	}
 

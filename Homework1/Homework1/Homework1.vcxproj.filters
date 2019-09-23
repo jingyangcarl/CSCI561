@@ -32,9 +32,6 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <Text Include="input.txt" />
-  </ItemGroup>
-  <ItemGroup>
     <ClInclude Include="BFSProcessor.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -50,5 +47,11 @@
     <ClInclude Include="SearchProcessor.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="Input1.txt">
+      <Filter>Resource Files</Filter>
+    </Text>
+    <Text Include="Input2.txt" />
   </ItemGroup>
 </Project>
