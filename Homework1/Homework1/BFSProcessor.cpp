@@ -70,7 +70,7 @@ void BFSProcessor::BreadFirstSearchNonrecursionEntrance() {
 	}
 }
 
-void BFSProcessor::BreadFirstSearchNonrecursion(const Location targetLoc) {
+void BFSProcessor::BreadFirstSearchNonrecursion(const Location& targetLoc) {
 	queue<Location> BFS;
 	set<Location> BFSVisiting;
 	set<Location> BFSVisited;

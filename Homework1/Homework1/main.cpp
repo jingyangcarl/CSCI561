@@ -58,7 +58,7 @@ int main() {
 		for (int i = 0; i < input.destinationCount; i++) {
 			Location destination;
 			PrepareNextLine(lineBuffer, inputFile);
-			if (!(lineBuffer >> destination.first >> destination.second)) return -5;
+			if (!(lineBuffer >> destination.second >> destination.first)) return -5;
 			input.destinations.insert(pair<Location, vector<Location>>(destination, vector<Location>(input.height * input.width)));
 		}
 
@@ -75,10 +75,10 @@ int main() {
 	inputFile.close();
 
 	// generate input;
-	InputGenerator inputGenerator(input);
-	inputGenerator.SetParameter(200, 200, 1, 50, 10);
-	inputGenerator.Generate();
-	inputGenerator.Output();
+	//InputGenerator inputGenerator(input);
+	//inputGenerator.SetParameter(10, 10, 1, 50, 10);
+	//inputGenerator.Generate();
+	//inputGenerator.Output();
 
 	// run algorithm;
 	clock_t start = clock();
@@ -90,7 +90,7 @@ int main() {
 	cout << "Trace: " << endl;
 	for (auto i = input.destinations.begin(); i != input.destinations.end(); i++) {
 		for (auto j = (*i).second.begin(); j != (*i).second.end(); j++) {
-			cout << "(" << (*j).first << ", " << (*j).second << ")";
+			cout << "(" << (*j).second << ", " << (*j).first << ")";
 		}
 		cout << endl;
 	}
