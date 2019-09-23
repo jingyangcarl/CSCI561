@@ -45,6 +45,7 @@ void UCSProcessor::UniformCostSearchNonrecursion(const Location targetLoc) {
 			input.destinations.at(targetLoc).push_back(traceBackLocation);
 		}
 		else {
+			// for eight neighbors
 			for (int i = -1; i < 2; i++) {
 				for (int j = -1; j < 2; j++) {
 					// check if the location is valid on map
@@ -56,7 +57,7 @@ void UCSProcessor::UniformCostSearchNonrecursion(const Location targetLoc) {
 					// if the next location is on North, South, West, and East, the cost should be 10, 
 					// if the next location is on NW, NE, SW, SE, the cost should be 14;
 					// otherwise, the cost should be infinite large;
-					int nextCost = currentCost + (abs(i) + abs(j) == 1) ? -10 : (abs(i) + abs(j) == 2) ? -14 : -INT_MAX;
+					int nextCost = currentCost + ((abs(i) + abs(j) == 1) ? -10 : (abs(i) + abs(j) == 2) ? -14 : -INT_MAX);
 					// check if the node is visited
 					if (UCSVisited.find(nextLoc) != UCSVisited.end()) continue;
 					// check if the node is already in the set to be visiting
