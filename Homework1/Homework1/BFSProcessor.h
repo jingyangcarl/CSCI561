@@ -11,7 +11,6 @@ public:
 	void BreadFirstSearchRecursion(Location currentLoc, const Location& targetLoc, map<Location, int>& path);
 	void BreadFirstSearchNonrecursionEntrance();
 	void BreadFirstSearchNonrecursion(const Location targetLoc);
-	vector<Location>& GetPath(Location& destination);
 
 private:
 	Input &input;

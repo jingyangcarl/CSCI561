@@ -108,9 +108,3 @@ void BFSProcessor::BreadFirstSearchNonrecursion(const Location targetLoc) {
 		}
 	}
 }
-
-vector<Location>& BFSProcessor::GetPath(Location& destination) {
-	if (input.destinations.find(destination) != input.destinations.end()) {
-		return (*(input.destinations.find(destination))).second;
-	}
-}
