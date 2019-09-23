@@ -6,8 +6,9 @@ public:
 	ASSProcessor(Input& input);
 	void run();
 
-	void AStarSearchNonrecursionEntrance();
-	void AStarSearchNonrecursion(const Location targetLoc);
+	void AStarSearchEntrance();
+	void AStarSearch(const Location targetLoc);
+	void Output();
 
 private:
 	Input& input;

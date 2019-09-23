@@ -1,23 +1,21 @@
 #include "UCSProcessor.h"
-#include <queue>
-#include <set>
 
 UCSProcessor::UCSProcessor(Input& input) :
 	input(input) {
 }
 
 void UCSProcessor::run() {
-	UniformCostSearchNonrecursionEntrance();
+	UniformCostSearchEntrance();
 }
 
-void UCSProcessor::UniformCostSearchNonrecursionEntrance() {
+void UCSProcessor::UniformCostSearchEntrance() {
 	for (auto i = input.destinations.begin(); i != input.destinations.end(); i++) {
 		(*i).second.clear();
-		UniformCostSearchNonrecursion((*i).first);
+		UniformCostSearch((*i).first);
 	}
 }
 
-void UCSProcessor::UniformCostSearchNonrecursion(const Location targetLoc) {
+void UCSProcessor::UniformCostSearch(const Location targetLoc) {
 
 	priority_queue<pair<int, Location>> UCS;
 	set<Location> UCSVisited;
@@ -76,4 +74,14 @@ void UCSProcessor::UniformCostSearchNonrecursion(const Location targetLoc) {
 		}
 	}
 
+}
+
+void UCSProcessor::Output() {
+	cout << "UCS Trace: " << endl;
+	for (auto i = input.destinations.begin(); i != input.destinations.end(); i++) {
+		for (auto j = (*i).second.rbegin(); j != (*i).second.rend(); j++) {
+			cout << "(" << (*j).second << ", " << (*j).first << ")";
+		}
+		cout << endl;
+	}
 }

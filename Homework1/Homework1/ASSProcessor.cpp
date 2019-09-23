@@ -1,30 +1,28 @@
 #include "ASSProcessor.h"
-#include <queue>
-#include <set>
 
 ASSProcessor::ASSProcessor(Input& input) :
 	input(input) {
 }
 
 void ASSProcessor::run() {
-	AStarSearchNonrecursionEntrance();
+	AStarSearchEntrance();
 }
 
-void ASSProcessor::AStarSearchNonrecursionEntrance() {
+void ASSProcessor::AStarSearchEntrance() {
 	for (auto i = input.destinations.begin(); i != input.destinations.end(); i++) {
 		(*i).second.clear();
-		AStarSearchNonrecursion((*i).first);
+		AStarSearch((*i).first);
 	}
 }
 
-void ASSProcessor::AStarSearchNonrecursion(const Location targetLoc) {
+void ASSProcessor::AStarSearch(const Location targetLoc) {
 
 	priority_queue<pair<int, Location>> ASS;
 	set<Location> ASSVisited;
 	set<Location> ASSVisiting;
 	map<Location, Location> trace;
 
-	int predictCost = input.GetDistance(input.landingLocation, targetLoc) * 10;
+	int predictCost = input.GetDistance(input.landingLocation, targetLoc) * -10;
 	ASS.push(pair<int, Location>(predictCost, input.landingLocation));
 	while (!ASS.empty()) {
 		// get the top node, the current priority queue is a max heap, use negative cost to convert it to a min heap;
@@ -50,7 +48,7 @@ void ASSProcessor::AStarSearchNonrecursion(const Location targetLoc) {
 					// if the next location is on North, South, West, and East, the cost should be 10, 
 					// if the next location is on NW, NE, SW, SE, the cost should be 14;
 					// otherwise, the cost should be infinite large;
-					int predictCost = input.GetDistance(nextLoc, targetLoc) * 10;
+					int predictCost = input.GetDistance(nextLoc, targetLoc) * -10;
 					int nextCost = predictCost + ((abs(i) + abs(j) == 1) ? -10 : (abs(i) + abs(j) == 2) ? -14 : -INT_MAX);
 					// check if the node is visited
 					if (ASSVisited.find(nextLoc) != ASSVisited.end()) continue;
@@ -70,4 +68,14 @@ void ASSProcessor::AStarSearchNonrecursion(const Location targetLoc) {
 		}
 	}
 
+}
+
+void ASSProcessor::Output() {
+	cout << "ASS Trace: " << endl;
+	for (auto i = input.destinations.begin(); i != input.destinations.end(); i++) {
+		for (auto j = (*i).second.rbegin(); j != (*i).second.rend(); j++) {
+			cout << "(" << (*j).second << ", " << (*j).first << ")";
+		}
+		cout << endl;
+	}
 }

@@ -1,6 +1,4 @@
 #include "BFSProcessor.h"
-#include <queue>
-#include <set>
 
 BFSProcessor::BFSProcessor(Input& input) :
 	input(input) {
@@ -68,5 +66,15 @@ void BFSProcessor::BreadFirstSearch(const Location& targetLoc) {
 				}
 			}
 		}
+	}
+}
+
+void BFSProcessor::Output() {
+	cout << "BFS Trace: " << endl;
+	for (auto i = input.destinations.begin(); i != input.destinations.end(); i++) {
+		for (auto j = (*i).second.rbegin(); j != (*i).second.rend(); j++) {
+			cout << "(" << (*j).second << ", " << (*j).first << ")";
+		}
+		cout << endl;
 	}
 }

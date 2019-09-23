@@ -6,8 +6,9 @@ public:
 	UCSProcessor(Input& input);
 	void run();
 
-	void UniformCostSearchNonrecursionEntrance();
-	void UniformCostSearchNonrecursion(const Location targetLoc);
+	void UniformCostSearchEntrance();
+	void UniformCostSearch(const Location targetLoc);
+	void Output();
 
 private:
 	Input& input;

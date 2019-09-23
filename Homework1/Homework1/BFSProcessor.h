@@ -1,7 +1,5 @@
 #pragma once
 #include "Utility.h"
-#include <vector>
-#include <map>
 
 class BFSProcessor {
 public:
@@ -10,6 +8,7 @@ public:
 
 	void BreadFirstSearchEntrance();
 	void BreadFirstSearch(const Location& targetLoc);
+	void Output();
 
 private:
 	Input &input;

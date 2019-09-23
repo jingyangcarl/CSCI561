@@ -82,34 +82,29 @@ int main() {
 	//inputGenerator.Generate();
 	inputGenerator.Output();
 
+	clock_t start, end;
 	// run BFS algorithm;
 	
-	clock_t start = clock();
 	BFSProcessor bfsProcessor(input);
+	start = clock();
 	bfsProcessor.run();
-	clock_t end = clock();
+	end = clock();
 	cout << "Running time: " << (end - start) / (double)CLOCKS_PER_SEC << endl;
-
-	cout << "BFS Trace: " << endl;
-	for (auto i = input.destinations.begin(); i != input.destinations.end(); i++) {
-		for (auto j = (*i).second.rbegin(); j != (*i).second.rend(); j++) {
-			cout << "(" << (*j).second << ", " << (*j).first << ")";
-		}
-		cout << endl;
-	}
+	bfsProcessor.Output();
 
 	// run UCS algorithm;
-	start = clock();
 	UCSProcessor ucsProcessor(input);
+	start = clock();
 	ucsProcessor.run();
 	end = clock();
 	cout << "Running time: " << (end - start) / (double)CLOCKS_PER_SEC << endl;
-	
-	cout << "UCS Trace: " << endl;
-	for (auto i = input.destinations.begin(); i != input.destinations.end(); i++) {
-		for (auto j = (*i).second.rbegin(); j != (*i).second.rend(); j++) {
-			cout << "(" << (*j).second << ", " << (*j).first << ")";
-		}
-		cout << endl;
-	}
+	ucsProcessor.Output();
+
+	// run ASS algorithm;
+	ASSProcessor assProcessor(input);
+	start = clock();
+	assProcessor.run();
+	end = clock();
+	cout << "Running time: " << (end - start) / (double)CLOCKS_PER_SEC << endl;
+	assProcessor.Output();
 }
