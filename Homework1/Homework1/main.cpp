@@ -7,11 +7,12 @@
 #include "InputGenerator.h"
 #include "BFSProcessor.h"
 #include "UCSProcessor.h"
+#include "ASSProcessor.h"
 using namespace std;
 
 
 int main() {
-	ifstream inputFile("input2.txt");
+	ifstream inputFile("input3.txt");
 	string line;
 	Input input;
 
@@ -77,8 +78,8 @@ int main() {
 
 	// generate input;
 	InputGenerator inputGenerator(input);
-	inputGenerator.SetParameter(4, 4, 1, 50, 10);
-	inputGenerator.Generate();
+	//inputGenerator.SetParameter(10, 10, 1, 50, 10);
+	//inputGenerator.Generate();
 	inputGenerator.Output();
 
 	// run BFS algorithm;

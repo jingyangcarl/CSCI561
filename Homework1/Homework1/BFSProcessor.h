@@ -8,8 +8,8 @@ public:
 	BFSProcessor(Input& input);
 	void run();
 
-	void BreadFirstSearchNonrecursionEntrance();
-	void BreadFirstSearchNonrecursion(const Location& targetLoc);
+	void BreadFirstSearchEntrance();
+	void BreadFirstSearch(const Location& targetLoc);
 
 private:
 	Input &input;

@@ -13,3 +13,11 @@ int InputParameter::GetZ(Location& location) {
 int InputParameter::GetSlopeBetween(Location& location1, Location& location2) {
 	return abs(GetZ(location1) - GetZ(location2));
 }
+
+float InputParameter::GetDistance(const Location& currentLoc, const Location& destinationLoc) {
+	int x1 = currentLoc.first;
+	int y1 = currentLoc.second;
+	int x2 = destinationLoc.first;
+	int y2 = destinationLoc.second;
+	return sqrtf((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2));
+}

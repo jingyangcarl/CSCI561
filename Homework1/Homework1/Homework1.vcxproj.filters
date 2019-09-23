@@ -30,6 +30,9 @@
     <ClCompile Include="UCSProcessor.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="ASSProcessor.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BFSProcessor.h">
@@ -47,11 +50,19 @@
     <ClInclude Include="SearchProcessor.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="ASSProcessor.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Text Include="Input1.txt">
       <Filter>Resource Files</Filter>
     </Text>
-    <Text Include="Input2.txt" />
+    <Text Include="Input3.txt">
+      <Filter>Resource Files</Filter>
+    </Text>
+    <Text Include="Input2.txt">
+      <Filter>Resource Files</Filter>
+    </Text>
   </ItemGroup>
 </Project>

@@ -7,17 +7,17 @@ BFSProcessor::BFSProcessor(Input& input) :
 }
 
 void BFSProcessor::run() {
-	BreadFirstSearchNonrecursionEntrance();
+	BreadFirstSearchEntrance();
 }
 
-void BFSProcessor::BreadFirstSearchNonrecursionEntrance() {
+void BFSProcessor::BreadFirstSearchEntrance() {
 	for (auto i = input.destinations.begin(); i != input.destinations.end(); i++) {
 		(*i).second.clear();
-		BreadFirstSearchNonrecursion((*i).first);
+		BreadFirstSearch((*i).first);
 	}
 }
 
-void BFSProcessor::BreadFirstSearchNonrecursion(const Location& targetLoc) {
+void BFSProcessor::BreadFirstSearch(const Location& targetLoc) {
 	queue<Location> BFS;
 	set<Location> BFSVisited;
 	set<Location> BFSVisiting;
