@@ -82,8 +82,9 @@ void BFSProcessor::BreadFirstSearchNonrecursion(const Location& targetLoc) {
 		BFSVisited.insert(currentLoc);
 		BFS.pop();
 		if (currentLoc == targetLoc) {
-			// find the solution
+			// found the solution
 			Location traceBackLocation(currentLoc);
+			// traceback
 			while (traceBackLocation != input.landingLocation) {
 				input.destinations.at(targetLoc).push_back(traceBackLocation);
 				traceBackLocation = (*trace.find(traceBackLocation)).second;
@@ -93,13 +94,20 @@ void BFSProcessor::BreadFirstSearchNonrecursion(const Location& targetLoc) {
 		else {
 			for (int i = -1; i < 2; i++) {
 				for (int j = -1; j < 2; j++) {
+					// check if the location is valid on map
 					if (currentLoc.first + i >= input.height || currentLoc.first + i < 0) continue;
 					if (currentLoc.second + j >= input.width || currentLoc.second + j < 0) continue;
+					// get the next location
 					Location nextLoc(currentLoc.first + i, currentLoc.second + j);
+					// check if the node is visited
 					if (BFSVisited.find(nextLoc) != BFSVisited.end()) continue;
+					// check if the node is already in the set to be visiting
 					if (BFSVisiting.find(nextLoc) != BFSVisiting.end()) continue;
+					// check if the node is reachable
 					if (input.GetSlopeBetween(currentLoc, nextLoc) <= input.maxSlope) {
+						// remember child-parent order for tracing back
 						trace.insert(pair<Location, Location>(nextLoc, currentLoc));
+						// push node
 						BFS.push(nextLoc);
 						BFSVisiting.insert(nextLoc);
 					}
