@@ -7,7 +7,10 @@ class BFSProcessor {
 public:
 	BFSProcessor(Input& input);
 	void run();
-	void BreadFirstSearch(const Location& targetLoc, Location currentLoc, map<Location, int>& path);
+	void BreadFirstSearchRecursionEntrance();
+	void BreadFirstSearchRecursion(Location currentLoc, const Location& targetLoc, map<Location, int>& path);
+	void BreadFirstSearchNonrecursionEntrance();
+	void BreadFirstSearchNonrecursion(const Location targetLoc);
 	vector<Location>& GetPath(Location& destination);
 
 private:

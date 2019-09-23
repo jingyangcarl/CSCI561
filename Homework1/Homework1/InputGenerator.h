@@ -2,6 +2,8 @@
 #include "Utility.h"
 #include <random>
 #include <iostream>
+#include <time.h>
+#include <time.h>
 
 class InputGenerator {
 public:

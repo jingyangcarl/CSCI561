@@ -76,7 +76,7 @@ int main() {
 
 	// generate input;
 	InputGenerator inputGenerator(input);
-	inputGenerator.SetParameter(10, 10, 4, 50, 10);
+	inputGenerator.SetParameter(4, 4, 2, 50, 10);
 	inputGenerator.Generate();
 	inputGenerator.Output();
 

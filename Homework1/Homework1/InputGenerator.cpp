@@ -19,6 +19,7 @@ void InputGenerator::Generate() {
 	input.height = height;
 
 	// generate landing location;
+	srand(time(NULL));
 	input.landingLocation.first = rand() % height;
 	input.landingLocation.second = rand() % width;
 
