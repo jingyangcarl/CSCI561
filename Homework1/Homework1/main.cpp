@@ -10,7 +10,14 @@
 #include "ASSProcessor.h"
 using namespace std;
 
-
+/*
+Description:
+This function is the entrance of this project;
+Input:
+@ void parameter: void;
+Output:
+@ void returnValue: void;
+*/
 int main() {
 	ifstream inputFile("input1.txt");
 	string line;

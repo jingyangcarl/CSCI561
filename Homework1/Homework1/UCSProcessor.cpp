@@ -1,13 +1,55 @@
 #include "UCSProcessor.h"
 
+/*
+Description:
+This function is a constructor;
+Input:
+@ Input& input: a defined input structure;
+Output:
+@ UCSProcessor returnValue: a UCSProcessor;
+*/
 UCSProcessor::UCSProcessor(Input& input) :
 	input(input) {
 }
 
+/*
+Description:
+This function is used to start the processor;
+Input:
+@ void parameter: void;
+Output:
+@ void returnValue: void;
+*/
 void UCSProcessor::Run() {
 	SearchEntrance();
 }
 
+/*
+Description:
+This function is used to output the path;
+Input:
+@ void parameter: void;
+Output:
+@ void returnValue: void;
+*/
+void UCSProcessor::Output() {
+	cout << "UCS Trace: " << endl;
+	for (auto i = input.destinations.begin(); i != input.destinations.end(); i++) {
+		for (auto j = (*i).second.rbegin(); j != (*i).second.rend(); j++) {
+			cout << "(" << (*j).second << ", " << (*j).first << ")";
+		}
+		cout << endl;
+	}
+}
+
+/*
+Description:
+This function is used to loop through all the desitinations;
+Input:
+@ void parameter: void;
+Output:
+@ void returnValue: void;
+*/
 void UCSProcessor::SearchEntrance() {
 	for (auto i = input.destinations.begin(); i != input.destinations.end(); i++) {
 		(*i).second.clear();
@@ -15,6 +57,14 @@ void UCSProcessor::SearchEntrance() {
 	}
 }
 
+/*
+Description:
+This function is used to perform Uniform Cost search algorithm to find a path from landing location to target location;
+Input:
+@ const Location& targetLoc: a target location;
+Output:
+@ void returnValue: void;
+*/
 void UCSProcessor::Search(const Location& targetLoc) {
 
 	priority_queue<pair<int, Location>> UCS;
@@ -72,16 +122,5 @@ void UCSProcessor::Search(const Location& targetLoc) {
 				}
 			}
 		}
-	}
-
-}
-
-void UCSProcessor::Output() {
-	cout << "UCS Trace: " << endl;
-	for (auto i = input.destinations.begin(); i != input.destinations.end(); i++) {
-		for (auto j = (*i).second.rbegin(); j != (*i).second.rend(); j++) {
-			cout << "(" << (*j).second << ", " << (*j).first << ")";
-		}
-		cout << endl;
 	}
 }

@@ -1,13 +1,55 @@
 #include "BFSProcessor.h"
 
+/*
+Description:
+This function is a constructor;
+Input:
+@ Input& input: a defined input structure;
+Output:
+@ BFSProcessor returnValue: a BFSProcessor;
+*/
 BFSProcessor::BFSProcessor(Input& input) :
 	input(input) {
 }
 
+/*
+Description:
+This function is used to start the processor;
+Input:
+@ void parameter: void;
+Output:
+@ void returnValue: void;
+*/
 void BFSProcessor::Run() {
 	SearchEntrance();
 }
 
+/*
+Description:
+This function is used to output the path;
+Input:
+@ void parameter: void;
+Output:
+@ void returnValue: void;
+*/
+void BFSProcessor::Output() {
+	cout << "BFS Trace: " << endl;
+	for (auto i = input.destinations.begin(); i != input.destinations.end(); i++) {
+		for (auto j = (*i).second.rbegin(); j != (*i).second.rend(); j++) {
+			cout << "(" << (*j).second << ", " << (*j).first << ")";
+		}
+		cout << endl;
+	}
+}
+
+/*
+Description:
+This function is used to loop through all the desitinations;
+Input:
+@ void parameter: void;
+Output:
+@ void returnValue: void;
+*/
 void BFSProcessor::SearchEntrance() {
 	for (auto i = input.destinations.begin(); i != input.destinations.end(); i++) {
 		(*i).second.clear();
@@ -15,6 +57,14 @@ void BFSProcessor::SearchEntrance() {
 	}
 }
 
+/*
+Description:
+This function is used to perform Breadth First search algorithm to find a path from landing location to target location;
+Input:
+@ const Location& targetLoc: a target location;
+Output:
+@ void returnValue: void;
+*/
 void BFSProcessor::Search(const Location& targetLoc) {
 	queue<Location> BFS;
 	set<Location> BFSVisited;
@@ -66,15 +116,5 @@ void BFSProcessor::Search(const Location& targetLoc) {
 				}
 			}
 		}
-	}
-}
-
-void BFSProcessor::Output() {
-	cout << "BFS Trace: " << endl;
-	for (auto i = input.destinations.begin(); i != input.destinations.end(); i++) {
-		for (auto j = (*i).second.rbegin(); j != (*i).second.rend(); j++) {
-			cout << "(" << (*j).second << ", " << (*j).first << ")";
-		}
-		cout << endl;
 	}
 }

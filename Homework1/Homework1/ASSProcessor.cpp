@@ -1,13 +1,55 @@
 #include "ASSProcessor.h"
 
+/*
+Description:
+This function is a constructor;
+Input:
+@ Input& input: a defined input structure;
+Output:
+@ ASSProcessor returnValue: a ASSProcessor;
+*/
 ASSProcessor::ASSProcessor(Input& input) :
 	input(input) {
 }
 
+/*
+Description:
+This function is used to start the processor;
+Input:
+@ void parameter: void;
+Output:
+@ void returnValue: void;
+*/
 void ASSProcessor::Run() {
 	SearchEntrance();
 }
 
+/*
+Description:
+This function is used to output the path;
+Input:
+@ void parameter: void;
+Output:
+@ void returnValue: void;
+*/
+void ASSProcessor::Output() {
+	cout << "ASS Trace: " << endl;
+	for (auto i = input.destinations.begin(); i != input.destinations.end(); i++) {
+		for (auto j = (*i).second.rbegin(); j != (*i).second.rend(); j++) {
+			cout << "(" << (*j).second << ", " << (*j).first << ")";
+		}
+		cout << endl;
+	}
+}
+
+/*
+Description:
+This function is used to loop through all the desitinations;
+Input:
+@ void parameter: void;
+Output:
+@ void returnValue: void;
+*/
 void ASSProcessor::SearchEntrance() {
 	for (auto i = input.destinations.begin(); i != input.destinations.end(); i++) {
 		(*i).second.clear();
@@ -15,6 +57,14 @@ void ASSProcessor::SearchEntrance() {
 	}
 }
 
+/*
+Description:
+This function is used to perform A* search algorithm to find a path from landing location to target location;
+Input:
+@ const Location& targetLoc: a target location;
+Output:
+@ void returnValue: void;
+*/
 void ASSProcessor::Search(const Location& targetLoc) {
 
 	priority_queue<pair<int, Location>> ASS;
@@ -76,15 +126,5 @@ void ASSProcessor::Search(const Location& targetLoc) {
 				}
 			}
 		}
-	}
-}
-
-void ASSProcessor::Output() {
-	cout << "ASS Trace: " << endl;
-	for (auto i = input.destinations.begin(); i != input.destinations.end(); i++) {
-		for (auto j = (*i).second.rbegin(); j != (*i).second.rend(); j++) {
-			cout << "(" << (*j).second << ", " << (*j).first << ")";
-		}
-		cout << endl;
 	}
 }
