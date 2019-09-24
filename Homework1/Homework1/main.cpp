@@ -19,7 +19,7 @@ Output:
 @ void returnValue: void;
 */
 int main() {
-	ifstream inputFile("input1.txt");
+	ifstream inputFile("input.txt");
 	string line;
 	Input input;
 
@@ -85,7 +85,7 @@ int main() {
 
 	// generate input;
 	InputGenerator inputGenerator(input);
-	//inputGenerator.SetParameter(4, 4, 1, 50, 10);
+	//inputGenerator.SetParameter(15, 15, 1, 50, 10);
 	//inputGenerator.Generate();
 	inputGenerator.Output();
 
