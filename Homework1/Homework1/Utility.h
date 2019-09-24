@@ -22,7 +22,8 @@ public:
 
 public:
 	int GetZ(int i, int j);
-	int GetZ(Location& location);
-	int GetSlopeBetween(Location& location1, Location& location2);
+	int GetZ(const Location& location);
+	int GetSlopeBetween(const Location& location1, const Location& location2);
 	float GetDistance(const Location& currentLoc, const Location& destinationLoc);
+	int GetManhattanDistance(const Location& currentLoc, const Location& destinationLoc);
 } Input;

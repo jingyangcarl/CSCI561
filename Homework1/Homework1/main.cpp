@@ -12,7 +12,7 @@ using namespace std;
 
 
 int main() {
-	ifstream inputFile("input3.txt");
+	ifstream inputFile("input1.txt");
 	string line;
 	Input input;
 
@@ -46,7 +46,7 @@ int main() {
 
 		// get landing location;
 		PrepareNextLine(lineBuffer, inputFile);
-		if (!(lineBuffer >> input.landingLocation.first >> input.landingLocation.second)) return -2;
+		if (!(lineBuffer >> input.landingLocation.second >> input.landingLocation.first)) return -2;
 
 		// get maximum slope for the rover;
 		PrepareNextLine(lineBuffer, inputFile);
@@ -78,13 +78,13 @@ int main() {
 
 	// generate input;
 	InputGenerator inputGenerator(input);
-	//inputGenerator.SetParameter(10, 10, 1, 50, 10);
+	//inputGenerator.SetParameter(4, 4, 1, 50, 10);
 	//inputGenerator.Generate();
 	inputGenerator.Output();
 
 	clock_t start, end;
+
 	// run BFS algorithm;
-	
 	BFSProcessor bfsProcessor(input);
 	start = clock();
 	bfsProcessor.Run();

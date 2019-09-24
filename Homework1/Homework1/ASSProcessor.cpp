@@ -22,7 +22,7 @@ void ASSProcessor::Search(const Location& targetLoc) {
 	set<Location> ASSVisiting;
 	map<Location, Location> trace;
 
-	int predictCost = input.GetDistance(input.landingLocation, targetLoc) * -10;
+	int predictCost = input.GetManhattanDistance(input.landingLocation, targetLoc) * -10;
 	ASS.push(pair<int, Location>(predictCost, input.landingLocation));
 	while (!ASS.empty()) {
 		// get the top node, the current priority queue is a max heap, use negative cost to convert it to a min heap;
@@ -56,8 +56,10 @@ void ASSProcessor::Search(const Location& targetLoc) {
 					// if the next location is on North, South, West, and East, the cost should be 10, 
 					// if the next location is on NW, NE, SW, SE, the cost should be 14;
 					// otherwise, the cost should be infinite large;
-					int predictCost = input.GetDistance(currentLoc, targetLoc) * -10;
-					int nextCost = predictCost - ((abs(i) + abs(j) == 1) ? -10 : (abs(i) + abs(j) == 2) ? -14 : -INT_MAX);
+					int predictCost = input.GetManhattanDistance(nextLoc, targetLoc) * -10;
+					int nextHorizontalCost = ((abs(i) + abs(j) == 1) ? 10 : (abs(i) + abs(j) == 2) ? 14 : INT_MAX);
+					int nextVerticalCost = abs(input.GetZ(currentLoc) - input.GetZ(nextLoc));
+					int nextCost = predictCost + nextHorizontalCost + nextVerticalCost;
 					// check if the node is visited
 					if (ASSVisited.find(nextLoc) != ASSVisited.end()) continue;
 					// check if the node is already in the set to be visiting

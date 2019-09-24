@@ -66,7 +66,7 @@ void InputGenerator::Output() {
 	cout << "Map: " << endl;
 	for (int i = 0; i < input.height; i++) {
 		for (int j = 0; j < input.width; j++) {
-			cout << input.map[i][j] << " ";
+			cout << input.map[i][j] << "\t";
 		}
 		cout << endl;
 	}
