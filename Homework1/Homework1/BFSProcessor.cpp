@@ -4,18 +4,18 @@ BFSProcessor::BFSProcessor(Input& input) :
 	input(input) {
 }
 
-void BFSProcessor::run() {
-	BreadFirstSearchEntrance();
+void BFSProcessor::Run() {
+	SearchEntrance();
 }
 
-void BFSProcessor::BreadFirstSearchEntrance() {
+void BFSProcessor::SearchEntrance() {
 	for (auto i = input.destinations.begin(); i != input.destinations.end(); i++) {
 		(*i).second.clear();
-		BreadFirstSearch((*i).first);
+		Search((*i).first);
 	}
 }
 
-void BFSProcessor::BreadFirstSearch(const Location& targetLoc) {
+void BFSProcessor::Search(const Location& targetLoc) {
 	queue<Location> BFS;
 	set<Location> BFSVisited;
 	set<Location> BFSVisiting;

@@ -87,7 +87,7 @@ int main() {
 	
 	BFSProcessor bfsProcessor(input);
 	start = clock();
-	bfsProcessor.run();
+	bfsProcessor.Run();
 	end = clock();
 	cout << "Running time: " << (end - start) / (double)CLOCKS_PER_SEC << endl;
 	bfsProcessor.Output();
@@ -95,7 +95,7 @@ int main() {
 	// run UCS algorithm;
 	UCSProcessor ucsProcessor(input);
 	start = clock();
-	ucsProcessor.run();
+	ucsProcessor.Run();
 	end = clock();
 	cout << "Running time: " << (end - start) / (double)CLOCKS_PER_SEC << endl;
 	ucsProcessor.Output();
@@ -103,7 +103,7 @@ int main() {
 	// run ASS algorithm;
 	ASSProcessor assProcessor(input);
 	start = clock();
-	assProcessor.run();
+	assProcessor.Run();
 	end = clock();
 	cout << "Running time: " << (end - start) / (double)CLOCKS_PER_SEC << endl;
 	assProcessor.Output();

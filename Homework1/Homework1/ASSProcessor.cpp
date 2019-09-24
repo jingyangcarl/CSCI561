@@ -4,18 +4,18 @@ ASSProcessor::ASSProcessor(Input& input) :
 	input(input) {
 }
 
-void ASSProcessor::run() {
-	AStarSearchEntrance();
+void ASSProcessor::Run() {
+	SearchEntrance();
 }
 
-void ASSProcessor::AStarSearchEntrance() {
+void ASSProcessor::SearchEntrance() {
 	for (auto i = input.destinations.begin(); i != input.destinations.end(); i++) {
 		(*i).second.clear();
-		AStarSearch((*i).first);
+		Search((*i).first);
 	}
 }
 
-void ASSProcessor::AStarSearch(const Location targetLoc) {
+void ASSProcessor::Search(const Location& targetLoc) {
 
 	priority_queue<pair<int, Location>> ASS;
 	set<Location> ASSVisited;
@@ -75,7 +75,6 @@ void ASSProcessor::AStarSearch(const Location targetLoc) {
 			}
 		}
 	}
-
 }
 
 void ASSProcessor::Output() {

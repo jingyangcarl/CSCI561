@@ -1,14 +1,16 @@
 #pragma once
 #include "Utility.h"
+#include "SearchProcessor.h"
 
-class ASSProcessor {
+class ASSProcessor : SearchProcessor {
 public:
 	ASSProcessor(Input& input);
-	void run();
-
-	void AStarSearchEntrance();
-	void AStarSearch(const Location targetLoc);
+	void Run();
 	void Output();
+
+private:
+	void SearchEntrance();
+	void Search(const Location& targetLoc);
 
 private:
 	Input& input;

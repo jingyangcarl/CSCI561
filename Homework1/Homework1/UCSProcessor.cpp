@@ -4,18 +4,18 @@ UCSProcessor::UCSProcessor(Input& input) :
 	input(input) {
 }
 
-void UCSProcessor::run() {
-	UniformCostSearchEntrance();
+void UCSProcessor::Run() {
+	SearchEntrance();
 }
 
-void UCSProcessor::UniformCostSearchEntrance() {
+void UCSProcessor::SearchEntrance() {
 	for (auto i = input.destinations.begin(); i != input.destinations.end(); i++) {
 		(*i).second.clear();
-		UniformCostSearch((*i).first);
+		Search((*i).first);
 	}
 }
 
-void UCSProcessor::UniformCostSearch(const Location targetLoc) {
+void UCSProcessor::Search(const Location& targetLoc) {
 
 	priority_queue<pair<int, Location>> UCS;
 	set<Location> UCSVisited;
