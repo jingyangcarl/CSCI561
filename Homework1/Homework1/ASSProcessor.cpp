@@ -33,7 +33,15 @@ void ASSProcessor::AStarSearch(const Location targetLoc) {
 
 		if (currentLoc == targetLoc) {
 			// traceback
-
+			Location traceBackLocation(currentLoc);
+			while (traceBackLocation != input.landingLocation) {
+				// push the current tracing back location;
+				input.destinations.at(targetLoc).push_back(traceBackLocation);
+				// look for its parent;
+				traceBackLocation = (*trace.find(traceBackLocation)).second;
+			}
+			// add landing location;
+			input.destinations.at(targetLoc).push_back(traceBackLocation);
 		}
 		else {
 			// for eight neighbors
@@ -48,8 +56,8 @@ void ASSProcessor::AStarSearch(const Location targetLoc) {
 					// if the next location is on North, South, West, and East, the cost should be 10, 
 					// if the next location is on NW, NE, SW, SE, the cost should be 14;
 					// otherwise, the cost should be infinite large;
-					int predictCost = input.GetDistance(nextLoc, targetLoc) * -10;
-					int nextCost = predictCost + ((abs(i) + abs(j) == 1) ? -10 : (abs(i) + abs(j) == 2) ? -14 : -INT_MAX);
+					int predictCost = input.GetDistance(currentLoc, targetLoc) * -10;
+					int nextCost = predictCost - ((abs(i) + abs(j) == 1) ? -10 : (abs(i) + abs(j) == 2) ? -14 : -INT_MAX);
 					// check if the node is visited
 					if (ASSVisited.find(nextLoc) != ASSVisited.end()) continue;
 					// check if the node is already in the set to be visiting
