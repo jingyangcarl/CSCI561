@@ -19,7 +19,7 @@ Output:
 @ void returnValue: void;
 */
 int main() {
-	ifstream inputFile("input.txt");
+	ifstream inputFile("input1.txt");
 	string line;
 	Input input;
 
@@ -85,9 +85,9 @@ int main() {
 
 	// generate input;
 	InputGenerator inputGenerator(input);
-	//inputGenerator.SetParameter(15, 15, 1, 50, 10);
+	//inputGenerator.SetParameter(10, 10, 1, 50, 10);
 	//inputGenerator.Generate();
-	//inputGenerator.Output();
+	inputGenerator.Output();
 
 	clock_t start, end;
 
@@ -116,5 +116,5 @@ int main() {
 	end = clock();
 	cout << "Running time: " << (end - start) / (double)CLOCKS_PER_SEC << endl;
 	assProcessor.Output();
-	assProcessor.Output();
+	assProcessor.OutputToFile();
 }
