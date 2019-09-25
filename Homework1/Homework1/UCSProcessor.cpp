@@ -44,6 +44,32 @@ void UCSProcessor::Output() {
 
 /*
 Description:
+This function is used to output the path to an output file;
+Input:
+@ void parameter: void;
+Output:
+@ void returnValue: void;
+*/
+void UCSProcessor::OutputToFile() {
+	ofstream output("output.txt");
+	if (output.is_open()) {
+		for (auto i = input.destinations.begin(); i != input.destinations.end(); i++) {
+			if (!(*i).second.empty()) {
+				for (auto j = (*i).second.rbegin(); j != (*i).second.rend(); j++) {
+					output << (*j).second << "," << (*j).first << " ";
+				}
+				output << endl;
+			}
+			else {
+				output << "FAIL" << endl;
+			}
+		}
+	}
+	output.close();
+}
+
+/*
+Description:
 This function is used to loop through all the desitinations;
 Input:
 @ void parameter: void;

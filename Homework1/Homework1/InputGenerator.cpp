@@ -65,11 +65,11 @@ void InputGenerator::Generate() {
 	default_random_engine generator;
 	normal_distribution<float> distribution(zMean, zStddev);
 
-	input.map = new int* [input.height];
+	input.landMap = new int* [input.height];
 	for (int i = 0; i < input.height; i++) {
-		input.map[i] = new int[input.width];
+		input.landMap[i] = new int[input.width];
 		for (int j = 0; j < input.width; j++) {
-			input.map[i][j] = distribution(generator);
+			input.landMap[i][j] = distribution(generator);
 		}
 	}
 }
@@ -100,7 +100,7 @@ void InputGenerator::Output() {
 	cout << "Map: " << endl;
 	for (int i = 0; i < input.height; i++) {
 		for (int j = 0; j < input.width; j++) {
-			cout << input.map[i][j] << "\t";
+			cout << input.landMap[i][j] << "\t";
 		}
 		cout << endl;
 	}

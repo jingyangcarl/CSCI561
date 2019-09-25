@@ -7,6 +7,7 @@ public:
 	ASSProcessor(Input& input);
 	void Run();
 	void Output();
+	void OutputToFile();
 
 private:
 	void SearchEntrance();

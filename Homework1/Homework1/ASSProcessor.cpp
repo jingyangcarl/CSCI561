@@ -44,6 +44,32 @@ void ASSProcessor::Output() {
 
 /*
 Description:
+This function is used to output the path to an output file;
+Input:
+@ void parameter: void;
+Output:
+@ void returnValue: void;
+*/
+void ASSProcessor::OutputToFile() {
+	ofstream output("output.txt");
+	if (output.is_open()) {
+		for (auto i = input.destinations.begin(); i != input.destinations.end(); i++) {
+			if (!(*i).second.empty()) {
+				for (auto j = (*i).second.rbegin(); j != (*i).second.rend(); j++) {
+					output << (*j).second << "," << (*j).first << " ";
+				}
+				output << endl;
+			}
+			else {
+				output << "FAIL" << endl;
+			}
+		}
+	}
+	output.close();
+}
+
+/*
+Description:
 This function is used to loop through all the desitinations;
 Input:
 @ void parameter: void;
@@ -72,8 +98,6 @@ void ASSProcessor::Search(const Location& targetLoc) {
 	set<Location> ASSVisiting;
 	map<Location, Location> trace;
 
-	int predictCost = input.GetDistance(input.landingLocation, targetLoc) * -10;
-	//ASS.push(pair<int, Location>(predictCost, input.landingLocation));
 	ASS.push(pair<int, Location>(0, input.landingLocation));
 	while (!ASS.empty()) {
 		// get the top node, the current priority queue is a max heap, use negative cost to convert it to a min heap;
@@ -108,11 +132,9 @@ void ASSProcessor::Search(const Location& targetLoc) {
 					// if the next location is on NW, NE, SW, SE, the cost should be 14;
 					// otherwise, the cost should be infinite large;
 					int predictCost = input.GetDistance(nextLoc, targetLoc) * 10;
-					int previousPredictCost = input.GetDistance(currentLoc, targetLoc) * 10;
-					int nextHorizontalCost = ((abs(i) + abs(j) == 1) ? 10 : (abs(i) + abs(j) == 2) ? 14 : INT_MAX);
-					int nextVerticalCost = abs(input.GetZ(currentLoc) - input.GetZ(nextLoc));
-					//int nextCost = predictCost - (currentCost - previousPredictCost) + nextHorizontalCost + nextVerticalCost;
-					int nextCost = currentCost - nextHorizontalCost - nextVerticalCost;
+					int nextHorizontalCost = ((abs(i) + abs(j) == 1) ? -10 : (abs(i) + abs(j) == 2) ? -14 : -INT_MAX);
+					int nextVerticalCost = -abs(input.GetZ(currentLoc) - input.GetZ(nextLoc));
+					int nextCost = currentCost + nextHorizontalCost + nextVerticalCost;
 					// check if the node is visited
 					if (ASSVisited.find(nextLoc) != ASSVisited.end()) continue;
 					// check if the node is already in the set to be visiting

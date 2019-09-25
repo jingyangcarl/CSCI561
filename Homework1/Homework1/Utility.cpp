@@ -12,7 +12,7 @@ Output:
 int InputParameter::GetZ(int i, int j) {
 	if (i < 0 || i >= height) return -INT_MAX;
 	if (j < 0 || j >= width) return -INT_MAX;
-	return map[i][j];
+	return landMap[i][j];
 }
 
 /*

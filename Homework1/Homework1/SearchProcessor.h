@@ -7,4 +7,5 @@ protected:
 	virtual void SearchEntrance() = 0;
 	virtual void Search(const Location& targetLoc) = 0;
 	virtual void Output() = 0;
+	virtual void OutputToFile() = 0;
 };

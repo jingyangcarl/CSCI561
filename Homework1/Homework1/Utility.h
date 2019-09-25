@@ -5,6 +5,7 @@
 #include <queue>
 #include <set>
 #include <iostream>
+#include <fstream>
 using namespace std;
 
 typedef pair<int, int> Location;
@@ -25,5 +26,5 @@ public:
 	int maxSlope = 0;
 	int destinationCount = 0;
 	map<Location, vector<Location>> destinations;
-	int** map = NULL;
+	int** landMap = NULL;
 } Input;

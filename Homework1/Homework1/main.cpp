@@ -72,12 +72,12 @@ int main() {
 		}
 
 		// get all z values on map;
-		input.map = new int* [input.height];
+		input.landMap = new int* [input.height];
 		for (int i = 0; i < input.height; i++) {
 			PrepareNextLine(lineBuffer, inputFile);
-			input.map[i] = new int[input.width];
+			input.landMap[i] = new int[input.width];
 			for (int j = 0; j < input.width; j++) {
-				if (!(lineBuffer >> input.map[i][j])) return -6;
+				if (!(lineBuffer >> input.landMap[i][j])) return -6;
 			}
 		}
 	}
@@ -87,7 +87,7 @@ int main() {
 	InputGenerator inputGenerator(input);
 	//inputGenerator.SetParameter(15, 15, 1, 50, 10);
 	//inputGenerator.Generate();
-	inputGenerator.Output();
+	//inputGenerator.Output();
 
 	clock_t start, end;
 
@@ -98,6 +98,7 @@ int main() {
 	end = clock();
 	cout << "Running time: " << (end - start) / (double)CLOCKS_PER_SEC << endl;
 	bfsProcessor.Output();
+	bfsProcessor.OutputToFile();
 
 	// run UCS algorithm;
 	UCSProcessor ucsProcessor(input);
@@ -106,6 +107,7 @@ int main() {
 	end = clock();
 	cout << "Running time: " << (end - start) / (double)CLOCKS_PER_SEC << endl;
 	ucsProcessor.Output();
+	ucsProcessor.OutputToFile();
 
 	// run ASS algorithm;
 	ASSProcessor assProcessor(input);
@@ -113,5 +115,6 @@ int main() {
 	assProcessor.Run();
 	end = clock();
 	cout << "Running time: " << (end - start) / (double)CLOCKS_PER_SEC << endl;
+	assProcessor.Output();
 	assProcessor.Output();
 }
