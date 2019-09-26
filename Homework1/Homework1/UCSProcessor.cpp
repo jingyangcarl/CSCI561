@@ -94,6 +94,7 @@ Output:
 void UCSProcessor::Search(const Location& targetLoc) {
 
 	priority_queue<pair<int, Location>> UCS;
+	map<Location, int> UCSmemory;
 	set<Location> UCSVisited;
 	set<Location> UCSVisiting;
 	map<Location, Location> trace;
@@ -135,13 +136,20 @@ void UCSProcessor::Search(const Location& targetLoc) {
 					// check if the node is visited
 					if (UCSVisited.find(nextLoc) != UCSVisited.end()) continue;
 					// check if the node is already in the set to be visiting
-					if (UCSVisiting.find(nextLoc) != UCSVisiting.end()) continue;
+					if (UCSVisiting.find(nextLoc) != UCSVisiting.end()) {
+						if (nextCost > (*UCSmemory.find(nextLoc)).second) {
+							(*trace.find(nextLoc)).second = currentLoc;
+							UCS.push(pair<int, Location>(nextCost, nextLoc));
+						}
+						continue;
+					}
 					// check if the ndoe is reachable
 					if (input.GetSlopeBetween(currentLoc, nextLoc) <= input.maxSlope) {
 						// remember child-parent order for tracing back
 						trace.insert(pair<Location, Location>(nextLoc, currentLoc));
 						// push node
 						UCS.push(pair<int, Location>(nextCost, nextLoc));
+						UCSmemory.insert(pair<Location, int>(nextLoc, nextCost));
 						// remember node to be visited;
 						UCSVisiting.insert(nextLoc);
 					}

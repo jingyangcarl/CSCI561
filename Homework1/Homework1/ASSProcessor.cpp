@@ -94,6 +94,7 @@ Output:
 void ASSProcessor::Search(const Location& targetLoc) {
 
 	priority_queue<pair<int, Location>> ASS;
+	map<Location, int> ASSmemory;
 	set<Location> ASSVisited;
 	set<Location> ASSVisiting;
 	map<Location, Location> trace;
@@ -131,20 +132,26 @@ void ASSProcessor::Search(const Location& targetLoc) {
 					// if the next location is on North, South, West, and East, the cost should be 10, 
 					// if the next location is on NW, NE, SW, SE, the cost should be 14;
 					// otherwise, the cost should be infinite large;
-					int predictCost = input.GetDistance(nextLoc, targetLoc) * 10;
-					int nextHorizontalCost = ((abs(i) + abs(j) == 1) ? -10 : (abs(i) + abs(j) == 2) ? -14 : -INT_MAX);
-					int nextVerticalCost = -abs(input.GetZ(currentLoc) - input.GetZ(nextLoc));
+					int nextHorizontalCost = -((abs(i) + abs(j) == 1) ? 10 : (abs(i) + abs(j) == 2) ? 14 : INT_MAX);
+					int nextVerticalCost = -input.GetSlopeBetween(currentLoc, nextLoc);
 					int nextCost = currentCost + nextHorizontalCost + nextVerticalCost;
 					// check if the node is visited
 					if (ASSVisited.find(nextLoc) != ASSVisited.end()) continue;
 					// check if the node is already in the set to be visiting
-					if (ASSVisiting.find(nextLoc) != ASSVisiting.end()) continue;
+					if (ASSVisiting.find(nextLoc) != ASSVisiting.end()) {
+						if (nextCost > (*ASSmemory.find(nextLoc)).second) {
+							(*trace.find(nextLoc)).second = currentLoc;
+							ASS.push(pair<int, Location>(nextCost, nextLoc));
+						}
+						continue;
+					}
 					// check if the ndoe is reachable
 					if (input.GetSlopeBetween(currentLoc, nextLoc) <= input.maxSlope) {
 						// remember child-parent order for tracing back
 						trace.insert(pair<Location, Location>(nextLoc, currentLoc));
 						// push node
 						ASS.push(pair<int, Location>(nextCost, nextLoc));
+						ASSmemory.insert(pair<Location, int>(nextLoc, nextCost));
 						// remember node to be visited;
 						ASSVisiting.insert(nextLoc);
 					}

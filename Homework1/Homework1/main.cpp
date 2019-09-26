@@ -19,7 +19,7 @@ Output:
 @ void returnValue: void;
 */
 int main() {
-	ifstream inputFile("input1.txt");
+	ifstream inputFile("input.txt");
 	string line;
 	Input input;
 
@@ -85,22 +85,22 @@ int main() {
 
 	// generate input;
 	InputGenerator inputGenerator(input);
-	//inputGenerator.SetParameter(10, 10, 1, 50, 10);
+	//inputGenerator.SetParameter(50, 50, 1, 50, 10);
 	//inputGenerator.Generate();
-	inputGenerator.Output();
+	//inputGenerator.Output();
 
 	clock_t start, end;
 
 	// run BFS algorithm;
-	BFSProcessor bfsProcessor(input);
-	start = clock();
-	bfsProcessor.Run();
-	end = clock();
-	cout << "Running time: " << (end - start) / (double)CLOCKS_PER_SEC << endl;
-	bfsProcessor.Output();
-	bfsProcessor.OutputToFile();
+	//BFSProcessor bfsProcessor(input);
+	//start = clock();
+	//bfsProcessor.Run();
+	//end = clock();
+	//cout << "Running time: " << (end - start) / (double)CLOCKS_PER_SEC << endl;
+	//bfsProcessor.Output();
+	//bfsProcessor.OutputToFile();
 
-	// run UCS algorithm;
+	//// run UCS algorithm;
 	UCSProcessor ucsProcessor(input);
 	start = clock();
 	ucsProcessor.Run();
