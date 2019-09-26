@@ -94,9 +94,8 @@ Output:
 void UCSProcessor::Search(const Location& targetLoc) {
 
 	priority_queue<pair<int, Location>> UCS;
-	map<Location, int> UCSmemory;
 	set<Location> UCSVisited;
-	set<Location> UCSVisiting;
+	map<Location, int> UCSVisiting;
 	map<Location, Location> trace;
 
 	UCS.push(pair<int, Location>(0, input.landingLocation));
@@ -129,6 +128,8 @@ void UCSProcessor::Search(const Location& targetLoc) {
 					if (currentLoc.second + j >= input.width || currentLoc.second + j < 0) continue;
 					// get the next location
 					Location nextLoc(currentLoc.first + i, currentLoc.second + j);
+					// check if the ndoe is reachable
+					if (input.GetSlopeBetween(currentLoc, nextLoc) > input.maxSlope) continue;
 					// get the next cost, 
 					// if the next location is on North, South, West, and East, the cost should be 10, 
 					// if the next location is on NW, NE, SW, SE, the cost should be 14;
@@ -138,23 +139,19 @@ void UCSProcessor::Search(const Location& targetLoc) {
 					if (UCSVisited.find(nextLoc) != UCSVisited.end()) continue;
 					// check if the node is already in the set to be visiting, if there is update the cost
 					if (UCSVisiting.find(nextLoc) != UCSVisiting.end()) {
-						if (input.GetSlopeBetween(currentLoc, nextLoc) > input.maxSlope) continue;
-						if (nextCost > (*UCSmemory.find(nextLoc)).second) {
+						if (nextCost > (*UCSVisiting.find(nextLoc)).second) {
 							(*trace.find(nextLoc)).second = currentLoc;
 							UCS.push(pair<int, Location>(nextCost, nextLoc));
 						}
 						continue;
 					}
 					// check if the ndoe is reachable
-					if (input.GetSlopeBetween(currentLoc, nextLoc) <= input.maxSlope) {
-						// remember child-parent order for tracing back
-						trace.insert(pair<Location, Location>(nextLoc, currentLoc));
-						// push node
-						UCS.push(pair<int, Location>(nextCost, nextLoc));
-						UCSmemory.insert(pair<Location, int>(nextLoc, nextCost));
-						// remember node to be visited;
-						UCSVisiting.insert(nextLoc);
-					}
+					// remember child-parent order for tracing back
+					trace.insert(pair<Location, Location>(nextLoc, currentLoc));
+					// push node
+					UCS.push(pair<int, Location>(nextCost, nextLoc));
+					// remember node to be visited;
+					UCSVisiting.insert(pair<Location, int>(nextLoc, nextCost));
 				}
 			}
 		}
