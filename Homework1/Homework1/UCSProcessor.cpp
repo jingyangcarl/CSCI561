@@ -118,6 +118,7 @@ void UCSProcessor::Search(const Location& targetLoc) {
 			}
 			// add landing location;
 			input.destinations.at(targetLoc).push_back(traceBackLocation);
+			return;
 		}
 		else {
 			// for eight neighbors
@@ -135,8 +136,9 @@ void UCSProcessor::Search(const Location& targetLoc) {
 					int nextCost = currentCost + ((abs(i) + abs(j) == 1) ? -10 : (abs(i) + abs(j) == 2) ? -14 : -INT_MAX);
 					// check if the node is visited
 					if (UCSVisited.find(nextLoc) != UCSVisited.end()) continue;
-					// check if the node is already in the set to be visiting
+					// check if the node is already in the set to be visiting, if there is update the cost
 					if (UCSVisiting.find(nextLoc) != UCSVisiting.end()) {
+						if (input.GetSlopeBetween(currentLoc, nextLoc) > input.maxSlope) continue;
 						if (nextCost > (*UCSmemory.find(nextLoc)).second) {
 							(*trace.find(nextLoc)).second = currentLoc;
 							UCS.push(pair<int, Location>(nextCost, nextLoc));

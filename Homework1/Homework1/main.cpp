@@ -19,7 +19,7 @@ Output:
 @ void returnValue: void;
 */
 int main() {
-	ifstream inputFile("input.txt");
+	ifstream inputFile("input0.txt");
 	string line;
 	Input input;
 
@@ -85,7 +85,7 @@ int main() {
 
 	// generate input;
 	InputGenerator inputGenerator(input);
-	//inputGenerator.SetParameter(50, 50, 1, 50, 10);
+	//inputGenerator.SetParameter(500, 500, 1, 50, 10);
 	//inputGenerator.Generate();
 	//inputGenerator.Output();
 
@@ -101,13 +101,13 @@ int main() {
 	//bfsProcessor.OutputToFile();
 
 	//// run UCS algorithm;
-	UCSProcessor ucsProcessor(input);
-	start = clock();
-	ucsProcessor.Run();
-	end = clock();
-	cout << "Running time: " << (end - start) / (double)CLOCKS_PER_SEC << endl;
-	ucsProcessor.Output();
-	ucsProcessor.OutputToFile();
+	//UCSProcessor ucsProcessor(input);
+	//start = clock();
+	//ucsProcessor.Run();
+	//end = clock();
+	//cout << "Running time: " << (end - start) / (double)CLOCKS_PER_SEC << endl;
+	//ucsProcessor.Output();
+	//ucsProcessor.OutputToFile();
 
 	// run ASS algorithm;
 	ASSProcessor assProcessor(input);

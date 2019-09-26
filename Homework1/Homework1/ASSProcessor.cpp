@@ -94,9 +94,10 @@ Output:
 void ASSProcessor::Search(const Location& targetLoc) {
 
 	priority_queue<pair<int, Location>> ASS;
-	map<Location, int> ASSmemory;
+	// used to save visited node and visiting node;
 	set<Location> ASSVisited;
-	set<Location> ASSVisiting;
+	map<Location, int> ASSVisiting;
+	// used to remember parent-child order for tracing back
 	map<Location, Location> trace;
 
 	ASS.push(pair<int, Location>(0, input.landingLocation));
@@ -118,6 +119,7 @@ void ASSProcessor::Search(const Location& targetLoc) {
 			}
 			// add landing location;
 			input.destinations.at(targetLoc).push_back(traceBackLocation);
+			return;
 		}
 		else {
 			// for eight neighbors
@@ -128,6 +130,10 @@ void ASSProcessor::Search(const Location& targetLoc) {
 					if (currentLoc.second + j >= input.width || currentLoc.second + j < 0) continue;
 					// get the next location
 					Location nextLoc(currentLoc.first + i, currentLoc.second + j);
+					// check if the node is rechable;
+					if (input.GetSlopeBetween(currentLoc, nextLoc) > input.maxSlope) continue;
+					// check if the node is visited
+					if (ASSVisited.find(nextLoc) != ASSVisited.end()) continue;
 					// get the next cost, 
 					// if the next location is on North, South, West, and East, the cost should be 10, 
 					// if the next location is on NW, NE, SW, SE, the cost should be 14;
@@ -135,26 +141,21 @@ void ASSProcessor::Search(const Location& targetLoc) {
 					int nextHorizontalCost = -((abs(i) + abs(j) == 1) ? 10 : (abs(i) + abs(j) == 2) ? 14 : INT_MAX);
 					int nextVerticalCost = -input.GetSlopeBetween(currentLoc, nextLoc);
 					int nextCost = currentCost + nextHorizontalCost + nextVerticalCost;
-					// check if the node is visited
-					if (ASSVisited.find(nextLoc) != ASSVisited.end()) continue;
-					// check if the node is already in the set to be visiting
+					// check if the node is already in the set to be visiting, if there is update the cost
 					if (ASSVisiting.find(nextLoc) != ASSVisiting.end()) {
-						if (nextCost > (*ASSmemory.find(nextLoc)).second) {
+						if (nextCost > (*ASSVisiting.find(nextLoc)).second) {
 							(*trace.find(nextLoc)).second = currentLoc;
 							ASS.push(pair<int, Location>(nextCost, nextLoc));
 						}
 						continue;
 					}
-					// check if the ndoe is reachable
-					if (input.GetSlopeBetween(currentLoc, nextLoc) <= input.maxSlope) {
-						// remember child-parent order for tracing back
-						trace.insert(pair<Location, Location>(nextLoc, currentLoc));
-						// push node
-						ASS.push(pair<int, Location>(nextCost, nextLoc));
-						ASSmemory.insert(pair<Location, int>(nextLoc, nextCost));
-						// remember node to be visited;
-						ASSVisiting.insert(nextLoc);
-					}
+					// for valid nodes
+					// remember child-parent order for tracing back
+					trace.insert(pair<Location, Location>(nextLoc, currentLoc));
+					// push node
+					ASS.push(pair<int, Location>(nextCost, nextLoc));
+					// remember node to be visited;
+					ASSVisiting.insert(pair<Location, int>(nextLoc, nextCost));
 				}
 			}
 		}
