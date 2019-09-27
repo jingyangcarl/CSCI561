@@ -19,7 +19,7 @@ Output:
 @ void returnValue: void;
 */
 int main() {
-	ifstream inputFile("input0.txt");
+	ifstream inputFile("input.txt");
 	string line;
 	Input input;
 
@@ -85,28 +85,29 @@ int main() {
 
 	// generate input;
 	InputGenerator inputGenerator(input);
-	//inputGenerator.SetParameter(500, 500, 1, 50, 10);
-	//inputGenerator.Generate();
-	//inputGenerator.Output();
+	inputGenerator.SetParameter(50, 50, 1, 50, 10);
+	inputGenerator.Generate();
+	inputGenerator.Output();
+	inputGenerator.OutputToFile();
 
 	clock_t start, end;
 
 	// run BFS algorithm;
-	//BFSProcessor bfsProcessor(input);
-	//start = clock();
-	//bfsProcessor.Run();
-	//end = clock();
-	//cout << "Running time: " << (end - start) / (double)CLOCKS_PER_SEC << endl;
-	//bfsProcessor.Output();
+	BFSProcessor bfsProcessor(input);
+	start = clock();
+	bfsProcessor.Run();
+	end = clock();
+	cout << "Running time: " << (end - start) / (double)CLOCKS_PER_SEC << endl;
+	bfsProcessor.Output();
 	//bfsProcessor.OutputToFile();
 
-	//// run UCS algorithm;
-	//UCSProcessor ucsProcessor(input);
-	//start = clock();
-	//ucsProcessor.Run();
-	//end = clock();
-	//cout << "Running time: " << (end - start) / (double)CLOCKS_PER_SEC << endl;
-	//ucsProcessor.Output();
+	// run UCS algorithm;
+	UCSProcessor ucsProcessor(input);
+	start = clock();
+	ucsProcessor.Run();
+	end = clock();
+	cout << "Running time: " << (end - start) / (double)CLOCKS_PER_SEC << endl;
+	ucsProcessor.Output();
 	//ucsProcessor.OutputToFile();
 
 	// run ASS algorithm;
@@ -116,5 +117,5 @@ int main() {
 	end = clock();
 	cout << "Running time: " << (end - start) / (double)CLOCKS_PER_SEC << endl;
 	assProcessor.Output();
-	assProcessor.OutputToFile();
+	//assProcessor.OutputToFile();
 }

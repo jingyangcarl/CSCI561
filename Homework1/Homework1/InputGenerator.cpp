@@ -106,3 +106,22 @@ void InputGenerator::Output() {
 	}
 	cout << endl;
 }
+
+void InputGenerator::OutputToFile() {
+	ofstream output("output.txt");
+	output << "ALGORITHM" << endl;
+	output << input.width << " " << input.height << endl;
+	output << input.landingLocation.second << " " << input.landingLocation.first << endl;
+	output << input.maxSlope << endl;
+	output << input.destinations.size() << endl;
+	for (auto i = input.destinations.begin(); i != input.destinations.end(); i++) {
+		output << (*i).first.second << " " << (*i).first.first << endl;
+	}
+	for (int i = 0; i < input.height; i++) {
+		for (int j = 0; j < input.width; j++) {
+			output << input.landMap[i][j] << " ";
+		}
+		output << endl;
+	}
+	output.close();
+}

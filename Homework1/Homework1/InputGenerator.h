@@ -12,6 +12,7 @@ public:
 	void SetParameter(int width, int height, int destinations, int zMean, int zStddev);
 	void Generate();
 	void Output();
+	void OutputToFile();
 
 private:
 	int width = 0;
