@@ -5,10 +5,9 @@
 #include <fstream>
 #include <sstream>
 
-#include "Utility.h"
+#include "Input.h"
+#include "Halma.h"
 using namespace std;
-
-#define BOARDSIZE 16
 
 /*
 Description:
@@ -73,8 +72,8 @@ int main() {
 		}
 
 		// run
-
-
+		Halma halma(input);
+		halma.run();
 	}
 }
 
