@@ -64,9 +64,15 @@ int main() {
 		}
 		inputFile.close();
 
+		cout << '\t';
 		for (int i = 0; i < BOARDSIZE; i++) {
+			cout << i << '\t';
+		}
+		cout << endl;
+		for (int i = 0; i < BOARDSIZE; i++) {
+			cout << i << '\t';
 			for (int j = 0; j < BOARDSIZE; j++) {
-				cout << input.board[i][j];
+				cout << input.board[i][j] << '\t';
 			}
 			cout << endl;
 		}
