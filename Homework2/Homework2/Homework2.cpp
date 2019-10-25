@@ -18,7 +18,7 @@ Output:
 @ void returnValue: void;
 */
 int main() {
-	ifstream inputFile("input.txt");
+	ifstream inputFile("input2.txt");
 	Input input;
 
 	if (inputFile.is_open()) {

@@ -237,7 +237,6 @@ void Halma::GetNextMoves(pair<int, int> from, vector<pair<int, int>>& to) {
 
 			// skip values not exist
 			if (row < 0 || row >= BOARDSIZE || col < 0 || col >= BOARDSIZE) continue;
-
 			// skip empty place
 			if (input.board[row][col] == '.') continue;
 
@@ -247,17 +246,21 @@ void Halma::GetNextMoves(pair<int, int> from, vector<pair<int, int>>& to) {
 
 			// skip values not exist
 			if (jRow < 0 || jRow >= BOARDSIZE || jCol < 0 || jCol >= BOARDSIZE) continue;
-
 			// jump is not possible if there is already any piece in the [jRow][jCol]
 			if (input.board[jRow][jCol] != '.') continue;
 
-			// recursively check available jumps
-			GetNextMoves(pair<int, int>(jRow, jCol), to);
+			// [jRow][jCol] is a legal jump, add it to jump list if it's not exist
+			pair<int, int> jump = pair<int, int>(jRow, jCol);
+			vector<pair<int, int>>::iterator iter;
+			for (iter = to.begin(); iter != to.end(); iter++) {
+				if ((*iter) == jump) break;
+			}
+			if (iter == to.end()) {
+				to.insert(to.begin() + 1, jump);
+				// recursively check available jumps
+				GetNextMoves(jump, to);
+			}
 
 		}
-	}
-
-	if ((*to.begin()) != from) {
-		to.insert(to.begin() + 1, from);
 	}
 }
