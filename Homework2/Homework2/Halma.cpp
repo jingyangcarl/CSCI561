@@ -257,7 +257,6 @@ void Halma::GetNextMoves(pair<int, int> from, vector<pair<int, int>>& to) {
 			}
 			if (iter == to.end()) {
 				to.insert(to.begin() + 1, jump);
-				// recursively check available jumps
 				GetNextMoves(jump, to);
 			}
 
