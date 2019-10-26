@@ -89,7 +89,7 @@ float Halma::Minimax(int plyDepth, bool player, time_t timeLeft, bool maxing, fl
 
 	float bestVal(0);
 
-	if (plyDepth == 0 || Winner() != -1) {
+	if (plyDepth == 0 || Winner() != -1 || clock() / CLOCKS_PER_SEC >= timeLeft) {
 		return Evaluation(player);
 	}
 
@@ -111,6 +111,10 @@ float Halma::Minimax(int plyDepth, bool player, time_t timeLeft, bool maxing, fl
 		for (auto j = (*i).second.begin(); j != (*i).second.end(); j++) {
 
 			pair<int, int> to = (*j);
+
+			if (clock() / CLOCKS_PER_SEC >= timeLeft) {
+				return bestVal;
+			}
 
 			// move the piece to possible destination
 			MovePiece(from, to);
