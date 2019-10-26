@@ -18,7 +18,7 @@ Output:
 @ void returnValue: void;
 */
 int main() {
-	ifstream inputFile("input2.txt");
+	ifstream inputFile("input.txt");
 	Input input;
 
 	if (inputFile.is_open()) {
@@ -80,6 +80,7 @@ int main() {
 		// run
 		Halma halma(input);
 		halma.run();
+		//halma.Output2File();
 	}
 }
 

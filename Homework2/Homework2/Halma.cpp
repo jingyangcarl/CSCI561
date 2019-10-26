@@ -43,7 +43,34 @@ Output:
 @ void returnValue: void;
 */
 void Halma::run() {
-	Minimax(this->plyDepth, input.player, input.timeLeft);
+	this->bestMove = Minimax(this->plyDepth, input.player, input.timeLeft, true, -FP_INFINITE, FP_INFINITE);
+
+	Output();
+
+	// move piece
+	MovePiece(bestMove.second.first, bestMove.second.second);
+
+}
+
+void Halma::Output() {
+	cout << "from: (" << bestMove.second.first.first << ", " << bestMove.second.first.second << ")" << endl;
+	cout << "to: (" << bestMove.second.second.first << ", " << bestMove.second.second.second << ")" << endl;
+}
+
+void Halma::Output2File() {
+	ofstream output("input.txt");
+	if (output.is_open()) {
+		output << (input.gameOption ? "GAME" : "SINGLE") << endl;
+		output << (!input.player ? "WHITE" : "BLACK") << endl;
+		output << input.timeLeft << endl;
+		for (int i = 0; i < BOARDSIZE; i++) {
+			for (int j = 0; j < BOARDSIZE; j++) {
+				output << input.board[i][j];
+			}
+			output << endl;
+		}
+	}
+	output.close();
 }
 
 /*
@@ -57,108 +84,77 @@ Input:
 Output:
 
 */
-float Halma::Minimax(int plyDepth, bool player, time_t timeLeft, bool maxing) {
-
-	if (plyDepth == 0 || Winner() != -1) {
-		Evaluation(player);
-	}
+pair<float, pair<pair<int, int>, pair<int, int>>>& Halma::Minimax(int plyDepth, bool player, time_t timeLeft, bool maxing, float alpha, float beta) {
 
 	float bestVal(0);
+	pair<pair<int, int>, pair<int, int>> bestMove;
+	auto* bestReturn = new pair<float, pair<pair<int, int>, pair<int, int>>>();
 
+	if (plyDepth == 0 || Winner() != -1) {
+		bestReturn->first = Evaluation(player);
+		bestReturn->second = bestMove;
+		return *bestReturn;
+	}
+
+	map<pair<int, int>, vector<pair<int, int>>> moves;
 	if (maxing) {
-		bestVal = LLONG_MAX;
-		GetNextMoves(player);
+		bestVal = -FP_INFINITE;
+		moves = GetNextMoves(player);
 	}
 	else {
-		bestVal = -LLONG_MAX;
-		GetNextMoves(!player);
+		bestVal = FP_INFINITE;
+		moves = GetNextMoves(!player);
 	}
 
+	// loop through all possible moves
+	for (auto i = moves.begin(); i != moves.end(); i++) {
 
-	return 0.0f;
-}
+		pair<int, int> from = (*i).first;
 
-/*
+		for (auto j = (*i).second.begin(); j != (*i).second.end(); j++) {
 
-*/
-float Halma::Evaluation(bool player) {
+			pair<int, int> to = (*j);
 
-	float value(0);
+			// move the piece to possible destination
+			MovePiece(from, to);
 
-	// loop through all the pieces and find the largest distance from current piece to the goal
-	for (int i = 0; i < BOARDSIZE; i++) {
-		for (int j = 0; j < BOARDSIZE; j++) {
+			// recursion
+			auto best = Minimax(plyDepth - 1, player, timeLeft, !maxing, alpha, beta);
+			float value = best.first;
 
-			if (input.board[i][j] == 'B') {
-				// if the current locaiton is a BLACK piece
+			// move the piece back
+			MovePiece(to, from);
 
-				float maxDistance(0);
-				for (vector<pair<int, int>>::iterator iter = blackGoal.begin(); iter != blackGoal.end(); iter++) {
-					// if the piece at goal's location is White or Empty, calculate the distance
-					if (input.board[(*iter).first][(*iter).second] != 'B'){
-						float distance = EuclideanDistance(i, j, (*iter).first, (*iter).second);
-						maxDistance = distance > maxDistance ? distance : maxDistance;
-					}
-				}
-				value -= maxDistance;
-
+			// update alpha
+			if (maxing && value > bestVal) {
+				bestVal = value;
+				bestMove.first = from;
+				bestMove.second = to;
+				alpha = fmaxf(alpha, value);
 			}
-			else if (input.board[i][j] == 'W') {
-				// if the current locaiton is a WHITE piece
 
-				float maxDistance(0);
-				for (vector<pair<int, int>>::iterator iter = whiteGoal.begin(); iter != whiteGoal.end(); iter++) {
-					// if the piece at goal's location is Black or Empty, calculate the distance
-					if (input.board[(*iter).first][(*iter).second] != 'W') {
-						float distance = EuclideanDistance(i, j, (*iter).first, (*iter).second);
-						maxDistance = distance > maxDistance ? distance : maxDistance;
-					}
-				}
-				value += maxDistance;
+			// update beta
+			if (!maxing && value < bestVal) {
+				bestVal = value;
+				bestMove.first = from;
+				bestMove.second = to;
+				beta = fminf(beta, value);
 			}
+
+			// pruning
+			if (beta <= alpha) {
+				bestReturn->first = bestVal;
+				bestReturn->second = bestMove;
+				return *bestReturn;
+			}
+
 		}
+
 	}
 
-	// if player is White
-	value = player == true ? -value : value;
-
-	return value;
-}
-
-/*
-
-*/
-float Halma::EuclideanDistance(float x1, float y1, float x2, float y2) {
-	return sqrtf(powf(x1 - x2, 2) + powf(y1 - y2, 2));
-}
-
-/*
-Description:
-This function is used to decide if there is a winner in the current situation, where the winner has to take place all enemy's place
-Input:
-@ void parameter: void;
-Output:
-@ int returnValue: if there doesn't exist a winner, return -1, otherwise, black-win returns 0, white-win returns 1;
-*/
-int Halma::Winner() {
-
-	vector<pair<int, int>>::iterator iter;
-
-	for (iter = blackGoal.begin(); iter != blackGoal.end(); iter++) {
-		// if black is the winner, all blackGoal should be black
-		if (input.board[(*iter).first][(*iter).second] != 'B') break;
-	}
-	// winner is black
-	if (iter == blackGoal.end()) return 0;
-
-	for (iter = whiteGoal.begin(); iter != whiteGoal.end(); iter++) {
-		if (input.board[(*iter).first][(*iter).second] != 'W') break;
-	}
-	// winner is white
-	if (iter == whiteGoal.end()) return 1;
-
-	// no winner
-	return -1;
+	bestReturn->first = bestVal;
+	bestReturn->second = bestMove;
+	return *bestReturn;
 }
 
 /*
@@ -171,7 +167,7 @@ Outout:
 */
 map<pair<int, int>, vector<pair<int, int>>>& Halma::GetNextMoves(bool player) {
 
-	map<pair<int, int>, vector<pair<int, int>>>* moves = new map<pair<int, int>, vector<pair<int, int>>>();
+	auto moves = new map<pair<int, int>, vector<pair<int, int>>>();
 
 	// loop through all the position on the board
 	for (int i = 0; i < BOARDSIZE; i++) {
@@ -221,7 +217,13 @@ map<pair<int, int>, vector<pair<int, int>>>& Halma::GetNextMoves(bool player) {
 }
 
 /*
-
+Description:
+This function is used to get all possible jumps from "from" location and add it to "to" list;
+Input:
+@ pair<int, int> from: jump from point;
+@ vector<pair<int, int>>& to: jump to point
+Output:
+@ void returnValue: void;
 */
 void Halma::GetNextMoves(pair<int, int> from, vector<pair<int, int>>& to) {
 
@@ -262,4 +264,110 @@ void Halma::GetNextMoves(pair<int, int> from, vector<pair<int, int>>& to) {
 
 		}
 	}
+}
+
+/*
+
+*/
+float Halma::Evaluation(bool player) {
+
+	float value(0);
+
+	// loop through all the pieces and find the largest distance from current piece to the goal
+	for (int i = 0; i < BOARDSIZE; i++) {
+		for (int j = 0; j < BOARDSIZE; j++) {
+
+			if (input.board[i][j] == 'B') {
+				// if the current locaiton is a BLACK piece
+
+				float maxDistance(0);
+				for (vector<pair<int, int>>::iterator iter = blackGoal.begin(); iter != blackGoal.end(); iter++) {
+					// if the piece at goal's location is White or Empty, calculate the distance
+					if (input.board[(*iter).first][(*iter).second] != 'B'){
+						float distance = EuclideanDistance(i, j, (*iter).first, (*iter).second);
+						maxDistance = distance > maxDistance ? distance : maxDistance;
+					}
+				}
+				value -= maxDistance;
+
+			}
+			else if (input.board[i][j] == 'W') {
+				// if the current locaiton is a WHITE piece
+
+				float maxDistance(0);
+				for (vector<pair<int, int>>::iterator iter = whiteGoal.begin(); iter != whiteGoal.end(); iter++) {
+					// if the piece at goal's location is Black or Empty, calculate the distance
+					if (input.board[(*iter).first][(*iter).second] != 'W') {
+						float distance = EuclideanDistance(i, j, (*iter).first, (*iter).second);
+						maxDistance = distance > maxDistance ? distance : maxDistance;
+					}
+				}
+				value += maxDistance;
+			}
+		}
+	}
+
+	// if player is White
+	value = (player == true ? -value : value);
+
+	return value;
+}
+
+/*
+Description:
+This function is used to calculate Euclidean distance given two location (x1, y1) and (x2, y2);
+Input:
+@ float x1: x1;
+@ float y1: y1;
+@ float x2: x2;
+@ float y2: y2;
+Output:
+@ float returnValie: Euclidean distance;
+*/
+float Halma::EuclideanDistance(float x1, float y1, float x2, float y2) {
+	return sqrtf(powf(x1 - x2, 2) + powf(y1 - y2, 2));
+}
+
+/*
+Description:
+This function is used to decide if there is a winner in the current situation, where the winner has to take place all enemy's place
+Input:
+@ void parameter: void;
+Output:
+@ int returnValue: if there doesn't exist a winner, return -1, otherwise, black-win returns 0, white-win returns 1;
+*/
+int Halma::Winner() {
+
+	vector<pair<int, int>>::iterator iter;
+
+	for (iter = blackGoal.begin(); iter != blackGoal.end(); iter++) {
+		// if black is the winner, all blackGoal should be black
+		if (input.board[(*iter).first][(*iter).second] != 'B') break;
+	}
+	// winner is black
+	if (iter == blackGoal.end()) return 0;
+
+	for (iter = whiteGoal.begin(); iter != whiteGoal.end(); iter++) {
+		if (input.board[(*iter).first][(*iter).second] != 'W') break;
+	}
+	// winner is white
+	if (iter == whiteGoal.end()) return 1;
+
+	// no winner
+	return -1;
+}
+
+/*
+Description:
+This function is used to move piece from (fromX, fromY) to (toX, toY);
+Input:
+@ pair<int, int> from: from location
+@ pair<int, int> to: to location
+Output:
+@ auto returnValie: auto;
+*/
+void Halma::MovePiece(pair<int, int>& from, pair<int, int>& to) {
+	char temp = input.board[to.first][to.second];
+	input.board[to.first][to.second] = input.board[from.first][from.second];
+	input.board[from.first][from.second] = temp;
 }
