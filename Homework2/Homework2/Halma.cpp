@@ -19,7 +19,7 @@ Halma::Halma(Input& input) :
 	for (int i = 0; i < 6; i++) {
 		for (int j = 0; j < 6; j++) {
 			if (i + j < 6 && i != 5 && j != 5) {
-				blackGoal.push_back(pair<int, int>(BOARDSIZE - 1 - i, BOARDSIZE - 1 - j));
+				blackGoal.insert(pair<int, int>(BOARDSIZE - 1 - i, BOARDSIZE - 1 - j));
 			}
 		}
 	}
@@ -28,10 +28,11 @@ Halma::Halma(Input& input) :
 	for (int i = 0; i < 6; i++) {
 		for (int j = 0; j < 6; j++) {
 			if (i + j < 6 && i != 5 && j != 5) {
-				whiteGoal.push_back(pair<int, int>(i, j));
+				whiteGoal.insert(pair<int, int>(i, j));
 			}
 		}
 	}
+
 }
 
 /*
@@ -43,18 +44,18 @@ Output:
 @ void returnValue: void;
 */
 void Halma::run() {
-	this->bestMove = Minimax(this->plyDepth, input.player, input.timeLeft, true, -FP_INFINITE, FP_INFINITE);
+	Minimax(this->plyDepth, input.player, input.timeLeft, true, -FP_INFINITE, FP_INFINITE);
 
 	Output();
 
 	// move piece
-	MovePiece(bestMove.second.first, bestMove.second.second);
+	MovePiece(bestMove.first, bestMove.second);
 
 }
 
 void Halma::Output() {
-	cout << "from: (" << bestMove.second.first.first << ", " << bestMove.second.first.second << ")" << endl;
-	cout << "to: (" << bestMove.second.second.first << ", " << bestMove.second.second.second << ")" << endl;
+	cout << "from: (" << bestMove.first.first << ", " << bestMove.first.second << ")" << endl;
+	cout << "to: (" << bestMove.second.first << ", " << bestMove.second.second << ")" << endl;
 }
 
 void Halma::Output2File() {
@@ -84,16 +85,12 @@ Input:
 Output:
 
 */
-pair<float, pair<pair<int, int>, pair<int, int>>>& Halma::Minimax(int plyDepth, bool player, time_t timeLeft, bool maxing, float alpha, float beta) {
+float Halma::Minimax(int plyDepth, bool player, time_t timeLeft, bool maxing, float alpha, float beta) {
 
 	float bestVal(0);
-	pair<pair<int, int>, pair<int, int>> bestMove;
-	auto* bestReturn = new pair<float, pair<pair<int, int>, pair<int, int>>>();
 
 	if (plyDepth == 0 || Winner() != -1) {
-		bestReturn->first = Evaluation(player);
-		bestReturn->second = bestMove;
-		return *bestReturn;
+		return Evaluation(player);
 	}
 
 	map<pair<int, int>, vector<pair<int, int>>> moves;
@@ -119,8 +116,7 @@ pair<float, pair<pair<int, int>, pair<int, int>>>& Halma::Minimax(int plyDepth, 
 			MovePiece(from, to);
 
 			// recursion
-			auto best = Minimax(plyDepth - 1, player, timeLeft, !maxing, alpha, beta);
-			float value = best.first;
+			float value = Minimax(plyDepth - 1, player, timeLeft, !maxing, alpha, beta);
 
 			// move the piece back
 			MovePiece(to, from);
@@ -143,18 +139,14 @@ pair<float, pair<pair<int, int>, pair<int, int>>>& Halma::Minimax(int plyDepth, 
 
 			// pruning
 			if (beta <= alpha) {
-				bestReturn->first = bestVal;
-				bestReturn->second = bestMove;
-				return *bestReturn;
+				return bestVal;
 			}
 
 		}
 
 	}
 
-	bestReturn->first = bestVal;
-	bestReturn->second = bestMove;
-	return *bestReturn;
+	return bestVal;
 }
 
 /*
@@ -209,6 +201,88 @@ map<pair<int, int>, vector<pair<int, int>>>& Halma::GetNextMoves(bool player) {
 
 			// if there is legal move, add it
 			if (to.empty()) continue;
+
+			// if the piece is in self campus, no limitation
+			// if the piece is in public area, the piece cannot move back
+			// if the piece is in enemy campus, the piece cannot go back to the public
+
+			set<pair<int, int>> toSet;
+			set<pair<int, int>> toSetPublic;
+			set<pair<int, int>> toSetSelf;
+			set<pair<int, int>> toSetEnemy;
+			if (player) {
+				// current player is WHITE
+
+				// classify possible moves
+				for (auto iter = to.begin(); iter != to.end(); iter++) {
+					
+					if (blackGoal.find(*iter) != blackGoal.end()) {
+						toSetSelf.insert(*iter);
+					} 
+					else if (whiteGoal.find(*iter) != whiteGoal.end()) {
+						toSetEnemy.insert(*iter);
+					}
+					else {
+						toSetPublic.insert(*iter);
+					}
+				}
+
+				if (blackGoal.find(from) != blackGoal.end()) {
+					// the current piece is in self campus
+					toSet.insert(toSetPublic.begin(), toSetPublic.end());
+					toSet.insert(toSetSelf.begin(), toSetSelf.end());
+					toSet.insert(toSetEnemy.begin(), toSetEnemy.end());
+				}
+				else if (whiteGoal.find(from) != whiteGoal.end()) {
+					// the current piece is in enemy campus
+					toSet.insert(toSetEnemy.begin(), toSetEnemy.end());
+				}
+				else {
+					// the current piece is in public area
+					toSet.insert(toSetEnemy.begin(), toSetEnemy.end());
+					toSet.insert(toSetPublic.begin(), toSetPublic.end());
+				}
+
+			}
+			else {
+				// current player is BLACK
+
+				// classify possible moves
+				for (auto iter = to.begin(); iter != to.end(); iter++) {
+
+					if (whiteGoal.find(*iter) != whiteGoal.end()) {
+						toSetSelf.insert(*iter);
+					}
+					else if (blackGoal.find(*iter) != blackGoal.end()) {
+						toSetEnemy.insert(*iter);
+					}
+					else {
+						toSetPublic.insert(*iter);
+					}
+				}
+
+				if (whiteGoal.find(from) != whiteGoal.end()) {
+					// the current piece is in self campus
+					toSet.insert(toSetPublic.begin(), toSetPublic.end());
+					toSet.insert(toSetSelf.begin(), toSetSelf.end());
+					toSet.insert(toSetEnemy.begin(), toSetEnemy.end());
+				}
+				else if (blackGoal.find(from) != blackGoal.end()) {
+					// the current piece is in enemy campus
+					toSet.insert(toSetEnemy.begin(), toSetEnemy.end());
+				}
+				else {
+					// the current piece is in public area
+					toSet.insert(toSetEnemy.begin(), toSetEnemy.end());
+					toSet.insert(toSetPublic.begin(), toSetPublic.end());
+				}
+			}
+
+			to.clear();
+			for (auto iter = toSet.begin(); iter != toSet.end(); iter++) {
+				to.push_back(*iter);
+			}
+			
 			moves->insert(pair<pair<int, int>, vector<pair<int, int>>>(from, to));
 		}
 	}
@@ -280,8 +354,8 @@ float Halma::Evaluation(bool player) {
 			if (input.board[i][j] == 'B') {
 				// if the current locaiton is a BLACK piece
 
-				float maxDistance(0);
-				for (vector<pair<int, int>>::iterator iter = blackGoal.begin(); iter != blackGoal.end(); iter++) {
+				float maxDistance(-50);
+				for (auto iter = blackGoal.begin(); iter != blackGoal.end(); iter++) {
 					// if the piece at goal's location is White or Empty, calculate the distance
 					if (input.board[(*iter).first][(*iter).second] != 'B'){
 						float distance = EuclideanDistance(i, j, (*iter).first, (*iter).second);
@@ -294,8 +368,8 @@ float Halma::Evaluation(bool player) {
 			else if (input.board[i][j] == 'W') {
 				// if the current locaiton is a WHITE piece
 
-				float maxDistance(0);
-				for (vector<pair<int, int>>::iterator iter = whiteGoal.begin(); iter != whiteGoal.end(); iter++) {
+				float maxDistance(-50);
+				for (auto iter = whiteGoal.begin(); iter != whiteGoal.end(); iter++) {
 					// if the piece at goal's location is Black or Empty, calculate the distance
 					if (input.board[(*iter).first][(*iter).second] != 'W') {
 						float distance = EuclideanDistance(i, j, (*iter).first, (*iter).second);
@@ -338,7 +412,7 @@ Output:
 */
 int Halma::Winner() {
 
-	vector<pair<int, int>>::iterator iter;
+	set<pair<int, int>>::iterator iter;
 
 	for (iter = blackGoal.begin(); iter != blackGoal.end(); iter++) {
 		// if black is the winner, all blackGoal should be black

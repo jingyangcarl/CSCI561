@@ -80,7 +80,7 @@ int main() {
 		// run
 		Halma halma(input);
 		halma.run();
-		//halma.Output2File();
+		halma.Output2File();
 	}
 }
 

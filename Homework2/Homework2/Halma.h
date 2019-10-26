@@ -6,6 +6,7 @@
 #include <map>
 #include <iostream>
 #include <fstream>
+#include <set>
 using namespace std;
 
 class Halma {
@@ -16,7 +17,7 @@ public:
 	void Output2File();
 
 protected:
-	pair<float, pair<pair<int, int>, pair<int, int>>>& Minimax(int plyDepth, bool player, time_t timeLeft, bool maxing, float alpha, float beta);
+	float Minimax(int plyDepth, bool player, time_t timeLeft, bool maxing, float alpha, float beta);
 	map<pair<int, int>, vector<pair<int, int>>>& GetNextMoves(bool player);
 	void GetNextMoves(pair<int, int> from, vector<pair<int, int>>& moves);
 	float Evaluation(bool player);
@@ -30,11 +31,12 @@ private:
 	int plyDepth;
 
 	// vector to save goal locations;
-	vector<pair<int, int>> blackGoal;
-	vector<pair<int, int>> whiteGoal;
+	set<pair<int, int>> blackGoal;
+	set<pair<int, int>> whiteGoal;
 
 	// best move
-	pair<float, pair<pair<int, int>, pair<int, int>>> bestMove;
+	pair<pair<int, int>, pair<int, int>> bestMove;
+
 
 };
 
