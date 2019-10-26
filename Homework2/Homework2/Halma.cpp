@@ -46,16 +46,15 @@ Output:
 void Halma::run() {
 	Minimax(this->plyDepth, input.player, input.timeLeft, true, -FP_INFINITE, FP_INFINITE);
 
-	Output();
+	cout << "from: (" << bestMove.first.first << ", " << bestMove.first.second << ")" << endl;
+	cout << "to: (" << bestMove.second.first << ", " << bestMove.second.second << ")" << endl;
+
+	vector<pair<pair<int, int>, pair<int, int>>> trace;
+	GetTrace(bestMove.first, bestMove.second, trace);
 
 	// move piece
 	MovePiece(bestMove.first, bestMove.second);
 
-}
-
-void Halma::Output() {
-	cout << "from: (" << bestMove.first.first << ", " << bestMove.first.second << ")" << endl;
-	cout << "to: (" << bestMove.second.first << ", " << bestMove.second.second << ")" << endl;
 }
 
 void Halma::Output2File() {
@@ -340,6 +339,68 @@ void Halma::GetNextMoves(pair<int, int> from, vector<pair<int, int>>& to) {
 				GetNextMoves(jump, to);
 			}
 
+		}
+	}
+}
+
+void Halma::GetTrace(pair<int, int> from, pair<int, int> to, vector<pair<pair<int, int>, pair<int, int>>>& trace) {
+
+	ofstream output("output.txt");
+	if (!output.is_open()) return;
+
+	if (abs(from.first - to.first) == 1 || abs(from.second - to.second) == 1) {
+		cout << "E " << from.first << ',' << from.second << ' ' << to.first << ',' << to.second << endl;
+		output << "E " << from.second << ',' << from.first << ' ' << to.second << ',' << to.first << endl;
+		output.close();
+	}
+	else {
+
+		if (from == to) {
+			for (auto iter = trace.begin(); iter != trace.end(); iter++) {
+				pair<int, int> from = (*iter).first;
+				pair<int, int> to = (*iter).second;
+				cout << "J " << from.first << ',' << from.second << ' ' << to.first << ',' << to.second << endl;
+				output << "J " << from.second << ',' << from.first << ' ' << to.second << ',' << to.first << endl;
+			}
+			output.close();
+			return;
+		}
+
+		for (int i = -1; i < 2; i++) {
+			for (int j = -1; j < 2; j++) {
+				// skip degenerate value
+				if (i == 0 && j == 0) continue;
+
+				int row = from.first + i;
+				int col = from.second + j;
+
+				// skip values not exist
+				if (row < 0 || row >= BOARDSIZE || col < 0 || col >= BOARDSIZE) continue;
+				// skip empty place
+				if (input.board[row][col] == '.') continue;
+
+				// jump through [row, col] is possible
+				int jRow = from.first + 2 * i;
+				int jCol = from.second + 2 * j;
+
+				// skip values not exist
+				if (jRow < 0 || jRow >= BOARDSIZE || jCol < 0 || jCol >= BOARDSIZE) continue;
+				// jump is not possible if there is already any piece in the [jRow][jCol]
+				if (input.board[jRow][jCol] != '.') continue;
+
+				auto jump = pair<int, int>(jRow, jCol);
+
+				auto iter = trace.begin();
+				for (iter = trace.begin(); iter != trace.end(); iter++) {
+					if ((*iter).first == jump) break;
+					if ((*iter).second == jump) break;
+				}
+				if (iter == trace.end()) {
+					trace.push_back(pair<pair<int, int>, pair<int, int>>(from, jump));
+					GetTrace(jump, to, trace);
+					trace.pop_back();
+				}
+			}
 		}
 	}
 }
