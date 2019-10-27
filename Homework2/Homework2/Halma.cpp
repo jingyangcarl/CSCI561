@@ -1,5 +1,7 @@
 #include "Halma.h"
 
+#define LONG_MAX      2147483647L   // maximum (signed) long value
+
 /*
 Description:
 This function is a constructor;
@@ -12,7 +14,7 @@ Halma::Halma(Input& input) :
 	input(input) {
 
 	// define minimax depth
-	this->plyDepth = 3;
+	this->plyDepth = 2;
 
 	// init goals for black pieces and white pieces
 	// black goals are initial white pieces' location, which the lower triangle
@@ -44,16 +46,17 @@ Output:
 @ void returnValue: void;
 */
 void Halma::run() {
-	Minimax(this->plyDepth, input.player, input.timeLeft, true, -FP_INFINITE, FP_INFINITE);
+	MinimaxReturn minimaxReturn = Minimax(this->plyDepth, input.player, input.timeLeft, true, -FP_INFINITE, FP_INFINITE);
 
-	cout << "from: (" << bestMove.first.first << ", " << bestMove.first.second << ")" << endl;
-	cout << "to: (" << bestMove.second.first << ", " << bestMove.second.second << ")" << endl;
+	cout << "from: (" << minimaxReturn.from.first << ", " << minimaxReturn.from.second << ")" << endl;
+	cout << "to: (" << minimaxReturn.to.first << ", " << minimaxReturn.to.second << ")" << endl;
 
 	vector<pair<pair<int, int>, pair<int, int>>> trace;
-	GetTrace(bestMove.first, bestMove.second, trace);
+	bool found(false);
+	GetTrace(minimaxReturn.from, minimaxReturn.to, trace, found);
 
 	// move piece
-	MovePiece(bestMove.first, bestMove.second);
+	MovePiece(minimaxReturn.from, minimaxReturn.to);
 
 }
 
@@ -84,22 +87,98 @@ Input:
 Output:
 
 */
-float Halma::Minimax(int plyDepth, bool player, time_t timeLeft, bool maxing, float alpha, float beta) {
+MinimaxReturn Halma::Minimax(int plyDepth, bool player, time_t timeLeft, bool maxing, float alpha, float beta) {
 
-	float bestVal(0);
-
-	if (plyDepth == 0 || Winner() != -1 || clock() / CLOCKS_PER_SEC >= timeLeft) {
-		return Evaluation(player);
+	MinimaxReturn bestReturn;
+	
+	if (plyDepth == 0 || Winner() != -1 || clock() / CLOCKS_PER_SEC >= timeLeft - 3) {
+		bestReturn.value = Evaluation(player);
+		return bestReturn;
 	}
 
 	map<pair<int, int>, vector<pair<int, int>>> moves;
 	if (maxing) {
-		bestVal = -FP_INFINITE;
+		bestReturn.value = -LONG_MAX;
 		moves = GetNextMoves(player);
 	}
 	else {
-		bestVal = FP_INFINITE;
+		bestReturn.value = LONG_MAX;
 		moves = GetNextMoves(!player);
+	}
+
+	for (auto i = moves.begin(); i != moves.end(); i++) {
+		pair<int, int> from = (*i).first;
+
+		set<pair<int, int>> toSet;
+		for (auto iter = (*i).second.begin(); iter != (*i).second.end(); iter++) {
+			toSet.insert(*iter);
+		}
+		if (player) {
+			// white
+			if (from.first == BOARDSIZE - 1 || from.second == BOARDSIZE - 1) {
+				for (auto j = (*i).second.begin(); j != (*i).second.end(); j++) {
+					auto to = (*j);
+					if (to.first > from.first || to.second > from.second) {
+						toSet.erase(to);
+					}
+				}
+			}
+		}
+		else {
+			// black
+			if (from.first == 0 || from.second == 0) {
+				for (auto j = (*i).second.begin(); j != (*i).second.end(); j++) {
+					auto to = (*j);
+					if (to.first < from.first || to.second < from.second) {
+						toSet.erase(to);
+					}
+				}
+			}
+		}
+		(*i).second.clear();
+		for (auto iter = toSet.begin(); iter != toSet.end(); iter++) {
+			(*i).second.push_back(*iter);
+		}
+
+		for (auto j = (*i).second.begin(); j != (*i).second.end(); j++) {
+			pair<int, int> to = (*j);
+
+			// if the piece is at the conner, move it
+			if (!player && from.first == 0 && from.second == 0) {
+				bestReturn.value = 10 * Evaluation(player);
+				bestReturn.from = from;
+				bestReturn.to = to;
+				return bestReturn;
+			}
+
+			if (player && from.first == BOARDSIZE - 1 && from.second == BOARDSIZE - 1) {
+				bestReturn.value = 10 * Evaluation(player);
+				bestReturn.from = from;
+				bestReturn.to = to;
+				return bestReturn;
+			}
+
+			// if the piece is from camp and go outside, do it right away
+			if (player) {
+				// white
+
+				if (blackGoal.find(from) != blackGoal.end() && blackGoal.find(to) == blackGoal.end()) {
+					bestReturn.value = 10 * Evaluation(player);
+					bestReturn.from = from;
+					bestReturn.to = to;
+					return bestReturn;
+				}
+			}
+			else {
+				// black
+				if (whiteGoal.find(from) != whiteGoal.end() && whiteGoal.find(to) == whiteGoal.end()) {
+					bestReturn.value = 10 * Evaluation(player);
+					bestReturn.from = from;
+					bestReturn.to = to;
+					return bestReturn;
+				}
+			}
+		}
 	}
 
 	// loop through all possible moves
@@ -111,45 +190,45 @@ float Halma::Minimax(int plyDepth, bool player, time_t timeLeft, bool maxing, fl
 
 			pair<int, int> to = (*j);
 
-			if (clock() / CLOCKS_PER_SEC >= timeLeft) {
-				return bestVal;
+			if (clock() / CLOCKS_PER_SEC >= timeLeft-3) {
+				return bestReturn;
 			}
 
 			// move the piece to possible destination
 			MovePiece(from, to);
 
 			// recursion
-			float value = Minimax(plyDepth - 1, player, timeLeft, !maxing, alpha, beta);
+			MinimaxReturn current = Minimax(plyDepth - 1, player, timeLeft, !maxing, alpha, beta);
 
 			// move the piece back
 			MovePiece(to, from);
 
 			// update alpha
-			if (maxing && value > bestVal) {
-				bestVal = value;
-				bestMove.first = from;
-				bestMove.second = to;
-				alpha = fmaxf(alpha, value);
+			if (maxing && current.value > bestReturn.value) {
+				bestReturn.value = current.value;
+				bestReturn.from = from;
+				bestReturn.to = to;
+				alpha = fmaxf(alpha, current.value);
 			}
 
 			// update beta
-			if (!maxing && value < bestVal) {
-				bestVal = value;
-				bestMove.first = from;
-				bestMove.second = to;
-				beta = fminf(beta, value);
+			if (!maxing && current.value < bestReturn.value) {
+				bestReturn.value = current.value;
+				bestReturn.from = from;
+				bestReturn.to = to;
+				beta = fminf(beta, current.value);
 			}
 
 			// pruning
 			if (beta <= alpha) {
-				return bestVal;
+				return bestReturn;
 			}
 
 		}
 
 	}
 
-	return bestVal;
+	return bestReturn;
 }
 
 /*
@@ -343,19 +422,25 @@ void Halma::GetNextMoves(pair<int, int> from, vector<pair<int, int>>& to) {
 	}
 }
 
-void Halma::GetTrace(pair<int, int> from, pair<int, int> to, vector<pair<pair<int, int>, pair<int, int>>>& trace) {
+void Halma::GetTrace(pair<int, int> from, pair<int, int> to, vector<pair<pair<int, int>, pair<int, int>>>& trace, bool& found) {
 
-	ofstream output("output.txt");
-	if (!output.is_open()) return;
 
 	if (abs(from.first - to.first) == 1 || abs(from.second - to.second) == 1) {
+		ofstream output("output.txt");
+		if (!output.is_open()) return;
 		cout << "E " << from.first << ',' << from.second << ' ' << to.first << ',' << to.second << endl;
 		output << "E " << from.second << ',' << from.first << ' ' << to.second << ',' << to.first << endl;
 		output.close();
 	}
 	else {
+		if (found) {
+			return;
+		}
 
 		if (from == to) {
+			found = true;
+			ofstream output("output.txt");
+			if (!output.is_open()) return;
 			for (auto iter = trace.begin(); iter != trace.end(); iter++) {
 				pair<int, int> from = (*iter).first;
 				pair<int, int> to = (*iter).second;
@@ -397,7 +482,7 @@ void Halma::GetTrace(pair<int, int> from, pair<int, int> to, vector<pair<pair<in
 				}
 				if (iter == trace.end()) {
 					trace.push_back(pair<pair<int, int>, pair<int, int>>(from, jump));
-					GetTrace(jump, to, trace);
+					GetTrace(jump, to, trace, found);
 					trace.pop_back();
 				}
 			}
@@ -412,14 +497,15 @@ float Halma::Evaluation(bool player) {
 
 	float value(0);
 
-	// loop through all the pieces and find the largest distance from current piece to the goal
+	// loop through all the pieces and find the largest distance from current pieces to the goals
 	for (int i = 0; i < BOARDSIZE; i++) {
 		for (int j = 0; j < BOARDSIZE; j++) {
 
 			if (input.board[i][j] == 'B') {
 				// if the current locaiton is a BLACK piece
 
-				float maxDistance(-50);
+				float maxDistance(0);
+
 				for (auto iter = blackGoal.begin(); iter != blackGoal.end(); iter++) {
 					// if the piece at goal's location is White or Empty, calculate the distance
 					if (input.board[(*iter).first][(*iter).second] != 'B'){
@@ -427,13 +513,18 @@ float Halma::Evaluation(bool player) {
 						maxDistance = distance > maxDistance ? distance : maxDistance;
 					}
 				}
+
+				if (whiteGoal.find(pair<int, int>(i, j)) != whiteGoal.end()) {
+					maxDistance /= 2;
+				}
+
 				value -= maxDistance;
 
 			}
 			else if (input.board[i][j] == 'W') {
 				// if the current locaiton is a WHITE piece
 
-				float maxDistance(-50);
+				float maxDistance(0);
 				for (auto iter = whiteGoal.begin(); iter != whiteGoal.end(); iter++) {
 					// if the piece at goal's location is Black or Empty, calculate the distance
 					if (input.board[(*iter).first][(*iter).second] != 'W') {
@@ -441,6 +532,11 @@ float Halma::Evaluation(bool player) {
 						maxDistance = distance > maxDistance ? distance : maxDistance;
 					}
 				}
+
+				if (blackGoal.find(pair<int, int>(i, j)) != blackGoal.end()) {
+					maxDistance /= 2;
+				}
+
 				value += maxDistance;
 			}
 		}
