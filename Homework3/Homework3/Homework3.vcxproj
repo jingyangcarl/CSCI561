@@ -154,10 +154,12 @@
     <ClCompile Include="Homework3.cpp" />
     <ClCompile Include="Input.cpp" />
     <ClCompile Include="KnowledgeBase.cpp" />
+    <ClCompile Include="Predicate.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Input.h" />
     <ClInclude Include="KnowledgeBase.h" />
+    <ClInclude Include="Predicate.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="input1.txt" />

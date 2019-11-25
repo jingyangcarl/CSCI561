@@ -56,8 +56,13 @@ int main() {
 		}
 	}
 	inputFile.close();
-
 	input.Print();
+
+	// Tell Knowledge Base
+	KnowledgeBase knowledgeBase;
+	for (auto& sentence : input.sentences) {
+		knowledgeBase.Tell(sentence);
+	}
 
 }
 

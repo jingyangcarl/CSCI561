@@ -1,6 +1,7 @@
 #include "Input.h"
 
 void InputParameter::Print() {
+	cout << "---Input---" << endl;
 	cout << "Number of Queries: " << this->querySize << endl;
 	for (auto& query : queries) {
 		cout << query << endl;
@@ -9,4 +10,5 @@ void InputParameter::Print() {
 	for (auto& sentence : sentences) {
 		cout << sentence << endl;
 	}
+	cout << endl;
 }
