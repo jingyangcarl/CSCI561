@@ -11,13 +11,14 @@ using std::endl;
 
 class Predicate {
 public:
-	Predicate(string& predicate_str);
+	Predicate(const string& predicate_str);
 	void negate();
 	void Print();
+	bool operator==(const Predicate& operand) const;
 
 protected:
 	bool SyntaxCheck();
-	void PreciateStringSplit();
+	void PreciateStringSegmentation();
 
 private:
 	string predicate_str;

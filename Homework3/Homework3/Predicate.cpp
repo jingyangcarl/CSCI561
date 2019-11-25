@@ -8,10 +8,10 @@ Input:
 Output:
 @ Preciate returnValue: a predicate;
 */
-Predicate::Predicate(string& predicate_str) {
+Predicate::Predicate(const string& predicate_str) {
 	this->predicate_str = predicate_str;
 	if (SyntaxCheck()) {
-		PreciateStringSplit();
+		PreciateStringSegmentation();
 		Print();
 	}
 }
@@ -46,6 +46,25 @@ void Predicate::Print() {
 		cout << argument << ", ";
 	}
 	cout << endl;
+}
+
+/*
+Description:
+This function is used to detect if the two predicates are the same;
+Input:
+@ const Predicate& operand: a given operand;
+Output:
+@ bool returnValue: if the two predicates are the same;
+*/
+bool Predicate::operator==(const Predicate& operand) const {
+	if (this->negation != operand.negation) return false;
+	if (this->action != operand.action) return false;
+	for (int i = 0; i < this->arguments.size(); i++) {
+		if (arguments[i] != operand.arguments[i]) {
+			return false;
+		}
+	}
+	return true;
 }
 
 /*
@@ -94,7 +113,7 @@ Input:
 Output:
 @ void returnValue: void;
 */
-void Predicate::PreciateStringSplit() {
+void Predicate::PreciateStringSegmentation() {
 	// remove white space
 	predicate_str.erase(remove_if(predicate_str.begin(), predicate_str.end(), isspace), predicate_str.end());
 	string predicate_str_copy = this->predicate_str;
