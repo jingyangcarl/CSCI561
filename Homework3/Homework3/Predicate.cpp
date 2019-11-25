@@ -58,13 +58,31 @@ Output:
 */
 bool Predicate::SyntaxCheck() {
 	// illegal characters
-	if (this->predicate_str.find('&') != string::npos) return false;
-	if (this->predicate_str.find('|') != string::npos) return false;
-	if (this->predicate_str.find('=') != string::npos) return false;
-	if (this->predicate_str.find('>') != string::npos) return false;
+	if (this->predicate_str.find('&') != string::npos) {
+		cout << "Invalide '&' in \"" << this->predicate_str << "\"" << endl;
+		return false;
+	}
+	if (this->predicate_str.find('|') != string::npos) {
+		cout << "Invalide '|' in \"" << this->predicate_str << "\"" << endl;
+		return false;
+	}
+	if (this->predicate_str.find('=') != string::npos) {
+		cout << "Invalide '=>' in \"" << this->predicate_str << "\"" << endl;
+		return false;
+	}
+	if (this->predicate_str.find('>') != string::npos) {
+		cout << "Invalide '>' in \"" << this->predicate_str << "\"" << endl;
+		return false;
+	}
 	// legal characters
-	if (this->predicate_str.find('(') == string::npos) return false;
-	if (this->predicate_str.find(')') == string::npos) return false;
+	if (this->predicate_str.find('(') == string::npos) {
+		cout << "Missing '(' in \"" << this->predicate_str << "\"" << endl;
+		return false;
+	}
+	if (this->predicate_str.find(')') == string::npos) {
+		cout << "Missing ')' in \"" << this->predicate_str << "\"" << endl;
+		return false;
+	}
 	return true;
 }
 
@@ -93,11 +111,12 @@ void Predicate::PreciateStringSplit() {
 	// get arguments
 	predicate_str_copy.erase(0, 1); // remove left parentheses
 	predicate_str_copy.erase(predicate_str_copy.size() - 1); // remove right parentheses
-	cout << predicate_str_copy << endl;
-	while (int pos = predicate_str_copy.find(',') != string::npos) {
-
+	while ((pos = predicate_str_copy.find(',')) != string::npos) {
+		// STOP HERE
 		string argument = predicate_str_copy.substr(0, pos);
 		this->arguments.push_back(argument);
-		predicate_str_copy.erase(0, pos);
+		predicate_str_copy.erase(0, pos + 1); // remove argument and comma
 	}
+	this->arguments.push_back(predicate_str_copy); // add last argument
+
 }
