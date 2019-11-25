@@ -12,8 +12,10 @@ using std::endl;
 class Predicate {
 public:
 	Predicate(const string& predicate_str);
+	Predicate(const Predicate& predicate);
 	void negate();
 	void Print();
+	Predicate& operator-() const;
 	bool operator==(const Predicate& operand) const;
 
 protected:

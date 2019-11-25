@@ -354,6 +354,7 @@ private:
 					while (exp[j] != ')') { j++; };
 					string temp(exp, i, j - i + 1);
 					result.push_back(temp);
+					cout << temp << endl;
 					i = j;
 				}
 			}
@@ -975,7 +976,7 @@ int main() {
 	string tempString;
 	vector<string> query;
 
-	ifstream InputFile("input2.txt");
+	ifstream InputFile("input1.txt");
 	if (InputFile.is_open()) {
 		getline(InputFile, tempString);
 		NQ = stoi(tempString);

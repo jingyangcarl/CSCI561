@@ -4,7 +4,7 @@
 Description:
 This function is a constructor;
 Input:
-@ string& predicateStr: a string denotes a predicate;
+@ const string& predicateStr: a string denotes a predicate;
 Output:
 @ Preciate returnValue: a predicate;
 */
@@ -14,6 +14,21 @@ Predicate::Predicate(const string& predicate_str) {
 		PreciateStringSegmentation();
 		Print();
 	}
+}
+
+/*
+Description:
+This function is a constructor;
+Input:
+@ const Predicate& predicate: a predicate object;
+Output:
+@ Predicate returnValie: a predicate;
+*/
+Predicate::Predicate(const Predicate& predicate) {
+	this->predicate_str = predicate.predicate_str;
+	this->negation = predicate.negation;
+	this->action = predicate.action;
+	this->arguments = predicate.arguments;
 }
 
 /*
@@ -50,7 +65,17 @@ void Predicate::Print() {
 
 /*
 Description:
-This function is used to detect if the two predicates are the same;
+This function is a overload of unary operator-
+*/
+Predicate& Predicate::operator-() const {
+	Predicate* result = new Predicate(*this);
+	result->negation = !result->negation;
+	return *result;
+}
+
+/*
+Description:
+This function is a overload of operator==
 Input:
 @ const Predicate& operand: a given operand;
 Output:
@@ -59,7 +84,7 @@ Output:
 bool Predicate::operator==(const Predicate& operand) const {
 	if (this->negation != operand.negation) return false;
 	if (this->action != operand.action) return false;
-	for (int i = 0; i < this->arguments.size(); i++) {
+	for (size_t i = 0; i < this->arguments.size(); i++) {
 		if (arguments[i] != operand.arguments[i]) {
 			return false;
 		}
