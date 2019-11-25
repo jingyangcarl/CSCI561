@@ -976,7 +976,7 @@ int main() {
 	string tempString;
 	vector<string> query;
 
-	ifstream InputFile("input1.txt");
+	ifstream InputFile("input3.txt");
 	if (InputFile.is_open()) {
 		getline(InputFile, tempString);
 		NQ = stoi(tempString);

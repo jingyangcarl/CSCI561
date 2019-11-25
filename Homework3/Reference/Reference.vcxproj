@@ -24,6 +24,7 @@
   <ItemGroup>
     <Text Include="input1.txt" />
     <Text Include="input2.txt" />
+    <Text Include="input3.txt" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
