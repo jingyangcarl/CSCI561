@@ -27,6 +27,9 @@
     <ClCompile Include="Predicate.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="DisjunctiveNormalForm.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Input.h">
@@ -38,12 +41,18 @@
     <ClInclude Include="Predicate.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="DisjunctiveNormalForm.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Text Include="input1.txt">
       <Filter>Resource Files</Filter>
     </Text>
     <Text Include="input2.txt">
+      <Filter>Resource Files</Filter>
+    </Text>
+    <Text Include="..\Reference\input3.txt">
       <Filter>Resource Files</Filter>
     </Text>
   </ItemGroup>

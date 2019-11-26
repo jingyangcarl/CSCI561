@@ -11,8 +11,12 @@ Output:
 Predicate::Predicate(const string& predicate_str) {
 	this->predicate_str = predicate_str;
 	if (SyntaxCheck()) {
+		this->validity = true;
 		PreciateStringSegmentation();
 		Print();
+	}
+	else {
+		this->validity = false;
 	}
 }
 
@@ -29,18 +33,8 @@ Predicate::Predicate(const Predicate& predicate) {
 	this->negation = predicate.negation;
 	this->action = predicate.action;
 	this->arguments = predicate.arguments;
-}
-
-/*
-Description:
-This function is used to negate the predicate;
-Input:
-@ void parameter: void;
-Output:
-@ void returnValie: void;
-*/
-void Predicate::negate() {
-	this->negation = !this->negation;
+	this->validity = predicate.validity;
+	this->variableNum = predicate.variableNum;
 }
 
 /*
@@ -65,6 +59,18 @@ void Predicate::Print() {
 
 /*
 Description:
+This function is used to return if the current predicate is a valid predicate;
+Input:
+@ void parameter: void;
+Output:
+@ bool returnValue: validity;
+*/
+bool Predicate::isValid() {
+	return this->validity;
+}
+
+/*
+Description:
 This function is a overload of unary operator-
 */
 Predicate& Predicate::operator-() const {
@@ -84,6 +90,7 @@ Output:
 bool Predicate::operator==(const Predicate& operand) const {
 	if (this->negation != operand.negation) return false;
 	if (this->action != operand.action) return false;
+	if (this->variableNum != operand.variableNum) return false;
 	for (size_t i = 0; i < this->arguments.size(); i++) {
 		if (arguments[i] != operand.arguments[i]) {
 			return false;
@@ -156,11 +163,12 @@ void Predicate::PreciateStringSegmentation() {
 	predicate_str_copy.erase(0, 1); // remove left parentheses
 	predicate_str_copy.erase(predicate_str_copy.size() - 1); // remove right parentheses
 	while ((pos = predicate_str_copy.find(',')) != string::npos) {
-		// STOP HERE
 		string argument = predicate_str_copy.substr(0, pos);
 		this->arguments.push_back(argument);
+		if (argument.size() == 1 && islower(argument[0])) variableNum++; 
 		predicate_str_copy.erase(0, pos + 1); // remove argument and comma
 	}
 	this->arguments.push_back(predicate_str_copy); // add last argument
+	if (predicate_str_copy.size() == 1 && islower(predicate_str_copy[0])) variableNum++;
 
 }

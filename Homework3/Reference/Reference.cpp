@@ -153,7 +153,7 @@ private:
 	struct hash_sentence {
 		size_t operator()(const sentence& s) const {
 			//Variable rewriting is used to equalize the sentences
-			//After rewriting the order of the variables in the predicates matters and not the variable names
+			//After rewriting the order of the variableNum in the predicates matters and not the variable names
 			int variable_count = 0;
 			unordered_map<string, int> visited_variables;
 
@@ -976,7 +976,7 @@ int main() {
 	string tempString;
 	vector<string> query;
 
-	ifstream InputFile("input3.txt");
+	ifstream InputFile("input2.txt");
 	if (InputFile.is_open()) {
 		getline(InputFile, tempString);
 		NQ = stoi(tempString);

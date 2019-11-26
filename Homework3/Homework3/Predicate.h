@@ -13,8 +13,11 @@ class Predicate {
 public:
 	Predicate(const string& predicate_str);
 	Predicate(const Predicate& predicate);
-	void negate();
+
 	void Print();
+	bool isValid();
+
+	// operator overwrite
 	Predicate& operator-() const;
 	bool operator==(const Predicate& operand) const;
 
@@ -24,6 +27,9 @@ protected:
 
 private:
 	string predicate_str;
+	bool validity; // used to denote if the predicate is valid or not
+	int variableNum;
+
 	bool negation;
 	string action;
 	vector<string> arguments;

@@ -151,17 +151,20 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="DisjunctiveNormalForm.cpp" />
     <ClCompile Include="Homework3.cpp" />
     <ClCompile Include="Input.cpp" />
     <ClCompile Include="KnowledgeBase.cpp" />
     <ClCompile Include="Predicate.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="DisjunctiveNormalForm.h" />
     <ClInclude Include="Input.h" />
     <ClInclude Include="KnowledgeBase.h" />
     <ClInclude Include="Predicate.h" />
   </ItemGroup>
   <ItemGroup>
+    <Text Include="..\Reference\input3.txt" />
     <Text Include="input1.txt" />
     <Text Include="input2.txt" />
   </ItemGroup>
