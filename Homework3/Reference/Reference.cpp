@@ -133,7 +133,7 @@ private:
 		}
 	};
 
-	//Define meaning of sentence
+	//Define meaning of predicates
 	typedef vector<predicate> sentence;
 
 	//Define hash function for predicates
@@ -667,7 +667,7 @@ private:
 					predicate_to_remove.push_back(i);
 				}
 			}
-			//Remove marked indices from sentence
+			//Remove marked indices from predicates
 			for (int i = 0; i < predicate_to_remove.size(); i++) {
 				s.erase(s.begin() + predicate_to_remove[i]);
 			}
@@ -699,9 +699,9 @@ private:
 			sentence temp;
 			vector<sentence> result;
 			for (int i = 0; i < sentences.size(); i++) {
-				//Convert to CNF sentence
+				//Convert to CNF predicates
 				temp = createCNFSentence(sentences[i]);
-				//Factorize the CNF sentence
+				//Factorize the CNF predicates
 				//Removes redundant predicates
 				//A(x) | A(x) becomes A(x)
 				temp = factorize(temp);
@@ -733,7 +733,7 @@ private:
 
 		sentence standardizeSentence(sentence& s) {
 			unordered_set<char> current_variables;
-			//Iterate through all predicates of the sentence
+			//Iterate through all predicates of the predicates
 			for (int i = 0; i < s.size(); i++) {
 				argumentList& args = s[i].args;
 				//Iterate through all arguments of the predicate
@@ -742,7 +742,7 @@ private:
 						//If argument is a variable then standardize
 						char var = args[j][0];
 						if (current_variables.count(var) == 0) {
-							//If variable hasn't been seen in the sentence previously
+							//If variable hasn't been seen in the predicates previously
 							if (variables.count(var) == 0) {
 								//If variable hasn't been seen in the KB previously
 								//Initialize the variable's unique count
@@ -776,12 +776,12 @@ private:
 		}
 
 		void store(sentence& s) {
-			//Standardize the CNF sentence
+			//Standardize the CNF predicates
 			s = standardizeSentence(s);
 			data.push_back(s);
-			//Generate location index of the sentence in the data vector
+			//Generate location index of the predicates in the data vector
 			unsigned long long int loc = data.size() - 1;
-			//Loop through all predicates in the sentence
+			//Loop through all predicates in the predicates
 			for (int i = 0; i < s.size(); i++) {
 				//Index the predicate
 				if (isLiteral(s[i])) {
@@ -910,10 +910,10 @@ public:
 				//Get resolvableSentences for each predicate in the currentSentence
 				vector<pair<sentence, unsigned int>> resolvableSentences = KB.fetch(resolver);
 				for (int j = 0; j < resolvableSentences.size(); j++) {
-					//Resolve each sentence in the resolvableSentences
+					//Resolve each predicates in the resolvableSentences
 					//Create substitution list
 					unordered_map<string, string> theta;
-					//Find unifiable predicate in the sentence
+					//Find unifiable predicate in the predicates
 					if (resolvableSentences[j].first[resolvableSentences[j].second].name == currentSentence[i].name &&
 						resolvableSentences[j].first[resolvableSentences[j].second].negated !=
 						currentSentence[i].negated) {

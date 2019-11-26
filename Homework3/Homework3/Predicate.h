@@ -19,6 +19,7 @@ public:
 
 	// operator overwrite
 	Predicate& operator-() const;
+	bool operator<(const Predicate& predicate) const;
 	bool operator==(const Predicate& operand) const;
 
 protected:

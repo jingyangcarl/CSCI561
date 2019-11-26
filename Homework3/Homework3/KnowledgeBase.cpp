@@ -1,14 +1,14 @@
 #include "KnowledgeBase.h"
 
-void KnowledgeBase::Tell(string& fact) {
-	//string predicate_str;
-	//predicate_str = "~Alert(Bob, ASAIDs)";
-	//Predicate predicate(predicate_str);
-	//cout << (predicate == -(-predicate)) << endl;
+void KnowledgeBase::Tell(string& fact_str) {
 
-	string dnf_str;
-	dnf_str = "Migraine(Alice)";
-	DNF dnf(dnf_str);
+	DNF fact(fact_str);
+	if (fact.Size() == 1) {
+		knowledge.insert(fact.Begin());
+	}
+	else {
+		inferenceRule.push_back(fact);
+	}
 
 }
 

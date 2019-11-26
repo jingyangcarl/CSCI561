@@ -10,6 +10,7 @@ public:
 	bool Ask(string& query);
 
 private:
-
+	set<Predicate> knowledge;
+	vector<DisjunctiveNormalForm> inferenceRule;
 };
 

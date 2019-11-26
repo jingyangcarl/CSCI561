@@ -13,7 +13,6 @@ Predicate::Predicate(const string& predicate_str) {
 	if (SyntaxCheck()) {
 		this->validity = true;
 		PreciateStringSegmentation();
-		Print();
 	}
 	else {
 		this->validity = false;
@@ -71,12 +70,25 @@ bool Predicate::isValid() {
 
 /*
 Description:
-This function is a overload of unary operator-
+This function is a overload of unary operator-;
+Input:
+@ void parameter: void;
+Output:
+@ Predicate& returnValue: a Predicate reference;
 */
 Predicate& Predicate::operator-() const {
 	Predicate* result = new Predicate(*this);
 	result->negation = !result->negation;
 	return *result;
+}
+
+bool Predicate::operator<(const Predicate& predicate) const {
+	if (this->arguments == predicate.arguments) {
+
+	}
+	else if (this->arguments < predicate.arguments) {
+		this->action < predicate.action;
+	}
 }
 
 /*
