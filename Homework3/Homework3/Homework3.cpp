@@ -12,7 +12,7 @@ using namespace std;
 
 int main() {
 
-	ifstream inputFile("input1.txt");
+	ifstream inputFile("input3.txt");
 	InputParameter input;
 
 	if (inputFile.is_open()) {
@@ -63,6 +63,9 @@ int main() {
 	for (auto& sentence : input.sentences) {
 		knowledgeBase.Tell(sentence);
 	}
+
+	string predicate_str = "~OldAge(John)";
+	cout << knowledgeBase.Ask(predicate_str) << endl;
 
 }
 

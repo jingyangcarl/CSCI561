@@ -6,17 +6,17 @@ using namespace std;
 class DisjunctiveNormalForm {
 public:
 	DisjunctiveNormalForm(string& fact);
-	int Size();
-	Predicate Begin() const;
+	int size();
+	set<Predicate>::iterator begin() const;
 
 	bool operator==(const DisjunctiveNormalForm& operand) const;
 
 protected:
-	bool isValidForm();
+	bool isSyntaxValid();
 	void Str2DNF();
 
 private:
-	string fact_str;
+	string dnf_str;
 	set<Predicate> predicates;
 };
 

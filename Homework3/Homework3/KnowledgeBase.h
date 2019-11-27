@@ -9,6 +9,9 @@ public:
 	void Tell(string& fact);
 	bool Ask(string& query);
 
+protected:
+
+
 private:
 	set<Predicate> knowledge;
 	vector<DisjunctiveNormalForm> inferenceRule;

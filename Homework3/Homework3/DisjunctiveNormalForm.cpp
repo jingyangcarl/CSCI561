@@ -1,40 +1,83 @@
 #include "DisjunctiveNormalForm.h"
 
 DisjunctiveNormalForm::DisjunctiveNormalForm(string& fact_str) {
-	this->fact_str = fact_str;
-	if (isValidForm()) {
+	this->dnf_str = fact_str;
+	if (isSyntaxValid()) {
 		Str2DNF();
+	}
+	else {
+
 	}
 }
 
-int DisjunctiveNormalForm::Size() {
+/*
+Description:
+This function is used to get the number of predicates in the sentence;
+Input:
+@ void parameter: void;
+Output:
+@ int returnValue: the number of predicates in the dnf;
+*/
+int DisjunctiveNormalForm::size() {
 	return this->predicates.size();
 }
 
-Predicate DisjunctiveNormalForm::Begin() const {
-	return *predicates.begin();
+/*
+Description:
+This function is used to get the first predicate in the sentence;
+Input:
+@ void parameter: void;
+Output:
+@ set<Predicate>::const_iterator returnValue: a iterator point to the first predicate in the sentence;
+*/
+set<Predicate>::const_iterator DisjunctiveNormalForm::begin() const {
+	return predicates.begin();
 }
 
+/*
+Description:
+This function is a overwrite of oeprator==;
+Input:
+@ const DisjunctiveNormalForm& operand: a reference to righthand side operand;
+Output:
+@ bool returnValue: if the two DisjuncitveNormalForm are the same;
+*/
 bool DisjunctiveNormalForm::operator==(const DisjunctiveNormalForm& operand) const {
 	if (this->predicates.size() != operand.predicates.size()) return false;
 	return this->predicates == operand.predicates;
 }
 
-bool DisjunctiveNormalForm::isValidForm() {
-	if (this->fact_str.find('|') != string::npos) {
-		cout << "Invalide '|' in \"" << this->fact_str << "\"" << endl;
+/*
+Description:
+This function is used to detect if the input string is a valid disjunctive normal form;
+Input:
+@ void parameter: void;
+Output:
+@ bool returnValue: if the input string is a valid dnf;
+*/
+bool DisjunctiveNormalForm::isSyntaxValid() {
+	if (this->dnf_str.find('|') != string::npos) {
+		cout << "Invalide '|' in \"" << this->dnf_str << "\"" << endl;
 		return false;
 	}
 }
 
+/*
+Description:
+This function is used to convert dnf_str to disjunctive normal form;
+Input:
+@ void parameter: void;
+Output:
+@ void returnValue: void;
+*/
 void DisjunctiveNormalForm::Str2DNF() {
 	int pos(0);
-	if ((pos = this->fact_str.find("=>")) != string::npos) {
+	if ((pos = this->dnf_str.find("=>")) != string::npos) {
 		// implication form
 
 		// get antecedent string and consequent string
-		string antecedent_str = fact_str.substr(0, pos);
-		string consequent_str = fact_str.substr(pos + 2); // "=>" length is 2
+		string antecedent_str = dnf_str.substr(0, pos);
+		string consequent_str = dnf_str.substr(pos + 2); // "=>" length is 2
 
 		// move white spaces
 		antecedent_str.erase(remove_if(antecedent_str.begin(), antecedent_str.end(), isspace), antecedent_str.end());
@@ -63,7 +106,7 @@ void DisjunctiveNormalForm::Str2DNF() {
 	}
 	else {
 		// single literal
-		Predicate predicate(fact_str);
+		Predicate predicate(dnf_str);
 		if (predicate.isValid()) {
 			predicates.insert(predicate);
 		}

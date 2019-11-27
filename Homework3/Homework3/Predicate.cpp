@@ -10,7 +10,7 @@ Output:
 */
 Predicate::Predicate(const string& predicate_str) {
 	this->predicate_str = predicate_str;
-	if (SyntaxCheck()) {
+	if (isSyntaxValid()) {
 		this->validity = true;
 		PreciateStringSegmentation();
 	}
@@ -30,7 +30,7 @@ Output:
 Predicate::Predicate(const Predicate& predicate) {
 	this->predicate_str = predicate.predicate_str;
 	this->negation = predicate.negation;
-	this->action = predicate.action;
+	this->action_str = predicate.action_str;
 	this->arguments = predicate.arguments;
 	this->validity = predicate.validity;
 	this->variableNum = predicate.variableNum;
@@ -48,7 +48,7 @@ void Predicate::Print() {
 	cout << "---Predicate---" << endl;
 	cout << "Predicate String: " << this->predicate_str << endl;
 	cout << "Negation: " << this->negation << endl;
-	cout << "Action: " << this->action << endl;
+	cout << "Action: " << this->action_str << endl;
 	cout << "Arguments: ";
 	for (auto& argument : this->arguments) {
 		cout << argument << ", ";
@@ -82,13 +82,16 @@ Predicate& Predicate::operator-() const {
 	return *result;
 }
 
+/*
+Description:
+This function is a overwrite of operator< used to compare two predicate used for set sorting;
+Input:
+@ const Predicate& predicate: righthand predicate;
+Output:
+@ bool returnValue: if the righthand predicate is less than the left;
+*/
 bool Predicate::operator<(const Predicate& predicate) const {
-	if (this->arguments == predicate.arguments) {
-
-	}
-	else if (this->arguments < predicate.arguments) {
-		this->action < predicate.action;
-	}
+	return this->predicate_str < predicate.predicate_str;
 }
 
 /*
@@ -101,7 +104,7 @@ Output:
 */
 bool Predicate::operator==(const Predicate& operand) const {
 	if (this->negation != operand.negation) return false;
-	if (this->action != operand.action) return false;
+	if (this->action_str != operand.action_str) return false;
 	if (this->variableNum != operand.variableNum) return false;
 	for (size_t i = 0; i < this->arguments.size(); i++) {
 		if (arguments[i] != operand.arguments[i]) {
@@ -119,7 +122,7 @@ Input:
 Output:
 @ bool returnValie: if the given predicate_str is a valid predicate string;
 */
-bool Predicate::SyntaxCheck() {
+bool Predicate::isSyntaxValid() {
 	// illegal characters
 	if (this->predicate_str.find('&') != string::npos) {
 		cout << "Invalide '&' in \"" << this->predicate_str << "\"" << endl;
@@ -151,7 +154,7 @@ bool Predicate::SyntaxCheck() {
 
 /*
 Description:
-This function is used to split a valid predicate string and get negation mark, action string, and arguments
+This function is used to split a valid predicate string and get negation mark, action_str string, and arguments
 Input:
 @ void parameter: void;
 Output:
@@ -168,8 +171,8 @@ void Predicate::PreciateStringSegmentation() {
 
 	// get name
 	int pos = predicate_str_copy.find('(');
-	this->action = predicate_str_copy.substr(0, pos);
-	predicate_str_copy.erase(0, pos); // remove action string
+	this->action_str = predicate_str_copy.substr(0, pos);
+	predicate_str_copy.erase(0, pos); // remove action_str string
 
 	// get arguments
 	predicate_str_copy.erase(0, 1); // remove left parentheses

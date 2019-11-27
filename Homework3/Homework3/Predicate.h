@@ -23,7 +23,7 @@ public:
 	bool operator==(const Predicate& operand) const;
 
 protected:
-	bool SyntaxCheck();
+	bool isSyntaxValid();
 	void PreciateStringSegmentation();
 
 private:
@@ -32,7 +32,7 @@ private:
 	int variableNum;
 
 	bool negation;
-	string action;
+	string action_str;
 	vector<string> arguments;
 };
 
