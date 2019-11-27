@@ -66,6 +66,18 @@ DisjunctiveNormalForm& DisjunctiveNormalForm::Unification(string& query) {
 	return *unifiedDNF;
 }
 
+DisjunctiveNormalForm& DisjunctiveNormalForm::Resolution(const Predicate& predicate) {
+
+	DisjunctiveNormalForm* resolvedDNF = new DisjunctiveNormalForm(*this);
+
+	set<Predicate>::iterator i;
+	if ((i = std::find(resolvedDNF->predicates.begin(), resolvedDNF->predicates.end(), -predicate)) != resolvedDNF->predicates.end()) {
+		resolvedDNF->predicates.erase(i);
+	}
+
+	return *resolvedDNF;
+}
+
 bool DisjunctiveNormalForm::operator<(const DisjunctiveNormalForm& operand) const {
 	return this->dnf_str < operand.dnf_str;
 }

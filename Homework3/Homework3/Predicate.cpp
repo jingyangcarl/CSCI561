@@ -14,8 +14,8 @@ Predicate::Predicate(const string& predicate_str, bool negate) {
 	this->predicate_str.erase(remove_if(this->predicate_str.begin(), this->predicate_str.end(), isspace), this->predicate_str.end());
 	if (isSyntaxValid()) {
 		this->validity = true;
-		this->negation = negate ? !this->negation : this->negation;
 		PreciateStringSegmentation();
+		this->negation = (negate ? !this->negation : this->negation);
 	}
 	else {
 		this->validity = false;
@@ -73,6 +73,10 @@ bool Predicate::isValid() {
 string Predicate::getActionStr() const {
 	return this->action_str;
 	pair<string, string> Unfication(string& query);
+}
+
+int Predicate::getvariableNum() const {
+	return this->variableIndex.size();
 }
 
 map<string, string> Predicate::Unification(Predicate& predicate_query) const {

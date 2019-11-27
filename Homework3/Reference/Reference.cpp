@@ -780,7 +780,7 @@ private:
 
 	};
 
-	//Create a global database for sentences in the knowledge base
+	//Create a global database for sentences in the knowledges base
 	Database DB;
 
 	//Substitutes argumentList with substitution list theta
@@ -835,7 +835,7 @@ public:
 		sentence alpha = CNF::convertToCNFSentences(query)[0];
 		//Negate alpha
 		sentence notAlpha = CNF::negateCNFSentence(alpha);
-		//Clone the knowledge base's data
+		//Clone the knowledges base's data
 		Database KB = DB.copy();
 		//Store alpha in KB (KB ^ ~alpha = unsatisfiable)
 		KB.store(notAlpha);
@@ -920,7 +920,7 @@ int main() {
 	string tempString;
 	vector<string> query;
 
-	ifstream InputFile("input2.txt");
+	ifstream InputFile("input1.txt");
 	if (InputFile.is_open()) {
 		getline(InputFile, tempString);
 		NQ = stoi(tempString);

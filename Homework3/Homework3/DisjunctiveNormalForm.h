@@ -12,6 +12,7 @@ public:
 	bool has(Predicate& predicate) const;
 	string str() const;
 	DisjunctiveNormalForm& Unification(string& query);
+	DisjunctiveNormalForm& Resolution(const Predicate& predicate);
 
 	bool operator<(const DisjunctiveNormalForm& operand) const;
 	bool operator==(const DisjunctiveNormalForm& operand) const;

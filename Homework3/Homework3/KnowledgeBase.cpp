@@ -4,7 +4,7 @@ void KnowledgeBase::Tell(string& fact_str) {
 
 	DNF fact(fact_str);
 	if (fact.size() == 1) {
-		knowledge.insert(*fact.begin());
+		knowledges.insert(*fact.begin());
 	}
 	else {
 		inferenceRule.push_back(fact);
@@ -21,8 +21,24 @@ bool KnowledgeBase::Ask(string& query) {
 		if (!rule_current.has(predicate)) {
 			continue;
 		}
-		DNF rule_new = rule_current.Unification(query);
+		DNF rule_unified = rule_current.Unification(query);
+		for (auto& knowledge : knowledges) {
+
+			// check conflication
+			if (-knowledge == predicate) {
+				return true;
+			}
+
+			DNF rule_resolved = rule_unified.Resolution(knowledge);
+			if (rule_resolved.size() == 1 && (*rule_resolved.begin()).getvariableNum() == 0) {
+				knowledges.insert(*rule_resolved.begin());
+			}
+			else {
+				toUnify.push_back(rule_resolved);
+			}
+		}
+
 	}
-	return true;
+	return false;
 
 }

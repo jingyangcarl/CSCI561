@@ -12,7 +12,7 @@ using namespace std;
 
 int main() {
 
-	ifstream inputFile("input1.txt");
+	ifstream inputFile("input2.txt");
 	InputParameter input;
 
 	if (inputFile.is_open()) {
@@ -45,11 +45,11 @@ int main() {
 			input.queries.push_back(lineBuffer.str());
 		}
 		
-		// get number of sentences in knowledge base
+		// get number of sentences in knowledges base
 		PrepareNextLine(lineBuffer, inputFile);
 		input.sentenceSize = atoi(lineBuffer.str().c_str());
 		
-		// get all sentences in knowledge base
+		// get all sentences in knowledges base
 		for (int i = 0; i < input.sentenceSize; i++) {
 			PrepareNextLine(lineBuffer, inputFile);
 			input.sentences.push_back(lineBuffer.str());
@@ -64,7 +64,7 @@ int main() {
 		knowledgeBase.Tell(sentence);
 	}
 
-	string predicate_str = "Take(Alice, NSAIDs)";
+	string predicate_str = "Alert(Bob, NSAIDs)";
 	cout << knowledgeBase.Ask(predicate_str) << endl;
 
 }
