@@ -1,14 +1,19 @@
 #pragma once
 #include "Predicate.h"
 #include <set>
+#include <map>
 using namespace std;
 
 class DisjunctiveNormalForm {
 public:
 	DisjunctiveNormalForm(string& fact);
-	int size();
+	int size() const;
 	set<Predicate>::iterator begin() const;
+	bool has(Predicate& predicate) const;
+	string str() const;
+	DisjunctiveNormalForm& Unification(string& query);
 
+	bool operator<(const DisjunctiveNormalForm& operand) const;
 	bool operator==(const DisjunctiveNormalForm& operand) const;
 
 protected:

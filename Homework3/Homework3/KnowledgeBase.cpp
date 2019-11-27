@@ -13,10 +13,16 @@ void KnowledgeBase::Tell(string& fact_str) {
 
 bool KnowledgeBase::Ask(string& query) {
 
-	Predicate predicate(query);
-	if (!predicate.isValid()) return false;
+	Predicate predicate(query, true);
+	vector<DisjunctiveNormalForm> toUnify = this->inferenceRule;
+	while (!toUnify.empty()) {
+		DNF rule_current = toUnify.front();
+		toUnify.erase(toUnify.begin());
+		if (!rule_current.has(predicate)) {
+			continue;
+		}
+		DNF rule_new = rule_current.Unification(query);
+	}
+	return true;
 
-	if (knowledge.find(predicate) != knowledge.end()) return true;
-
-	return false;
 }

@@ -1,5 +1,7 @@
 #pragma once
 #include <string>
+#include <map>
+#include <stack>
 using namespace std;
 #include "Predicate.h"
 #include "DisjunctiveNormalForm.h"
@@ -11,9 +13,9 @@ public:
 
 protected:
 
-
 private:
 	set<Predicate> knowledge;
 	vector<DisjunctiveNormalForm> inferenceRule;
+
 };
 

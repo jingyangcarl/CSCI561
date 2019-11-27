@@ -1,50 +1,3 @@
-//  Windows
-#ifdef _WIN32
-
-#include <Windows.h>
-
-double get_wall_time() {
-	LARGE_INTEGER time, freq;
-	if (!QueryPerformanceFrequency(&freq)) {
-		//  Handle error
-		return 0;
-	}
-	if (!QueryPerformanceCounter(&time)) {
-		//  Handle error
-		return 0;
-	}
-	return (double)time.QuadPart / freq.QuadPart;
-}
-
-double get_cpu_time() {
-	FILETIME a, b, c, d;
-	if (GetProcessTimes(GetCurrentProcess(), &a, &b, &c, &d) != 0) {
-		//  Returns total user time.
-		//  Can be tweaked to include kernel times as well.
-		return (double)(d.dwLowDateTime | ((unsigned long long) d.dwHighDateTime << 32)) * 0.0000001;
-	}
-	else {
-		//  Handle error
-		return 0;
-	}
-}
-//  Posix/Linux
-#else
-#include <time.h>
-#include <sys/time.h>
-double get_wall_time() {
-	struct timeval time;
-	if (gettimeofday(&time, NULL)) {
-		//  Handle error
-		return 0;
-	}
-	return (double)time.tv_sec + (double)time.tv_usec * .000001;
-}
-double get_cpu_time() {
-	return (double)clock() / CLOCKS_PER_SEC;
-}
-#endif
-
 #include <iostream>
 #include <fstream>
 #include <vector>
@@ -59,26 +12,23 @@ using namespace std;
 
 class Knowledgebase {
 private:
-	//Define maximum amount of time for each query in seconds
-	long maxQueryTime = 10;
-
 	//Define meaning of argument
 	typedef vector<string> argumentList;
 
-	//Define meaning of predicate
-	struct predicate {
+	//Define meaning of Predicate
+	struct Predicate {
 		bool negated;
 		string name;
 		argumentList args;
 
-		predicate negate() {
+		Predicate negate() {
 			bool s = !negated;
 			string n = name;
 			argumentList a = args;
-			return predicate(s, n, a);
+			return Predicate(s, n, a);
 		}
 
-		predicate(string& s) {
+		Predicate(string& s) {
 			const char* t = s.c_str();
 
 			negated = t[0] == '~';
@@ -102,13 +52,13 @@ private:
 			}
 		}
 
-		predicate(bool& s, string& n, argumentList& a) {
+		Predicate(bool& s, string& n, argumentList& a) {
 			negated = s;
 			name = n;
 			args = a;
 		}
 
-		bool operator==(const predicate& p) const {
+		bool operator==(const Predicate& p) const {
 			size_t signature1 = 17;
 			signature1 = signature1 * 31 + hash<bool>()(this->negated);
 			signature1 = signature1 * 31 + hash<string>()(this->name);
@@ -134,11 +84,11 @@ private:
 	};
 
 	//Define meaning of predicates
-	typedef vector<predicate> sentence;
+	typedef vector<Predicate> sentence;
 
 	//Define hash function for predicates
 	struct hash_predicate {
-		size_t operator()(const predicate& p) const {
+		size_t operator()(const Predicate& p) const {
 			size_t signature = 17;
 			signature = signature * 31 + hash<bool>()(p.negated);
 			signature = signature * 31 + hash<string>()(p.name);
@@ -187,7 +137,7 @@ private:
 		return islower(x[0]);
 	}
 
-	static bool isLiteral(const predicate& p) {
+	static bool isLiteral(const Predicate& p) {
 		for (int i = 0; i < p.args.size(); i++) {
 			if (isVariable(p.args[i]))
 				return false;
@@ -625,7 +575,7 @@ private:
 		static sentence createCNFSentence(node* root) {
 			sentence result, temp;
 			if (root->left == nullptr && root->right == nullptr) {
-				predicate t = predicate(root->data);
+				Predicate t = Predicate(root->data);
 				result.push_back(t);
 				return result;
 			}
@@ -652,17 +602,17 @@ private:
 		static sentence& factorize(sentence& s) {
 			//Removes duplicate predicates
 			//Set of visited predicates
-			unordered_set<predicate, hash_predicate> visited;
-			//Vector of predicate indices to remove
+			unordered_set<Predicate, hash_predicate> visited;
+			//Vector of Predicate indices to remove
 			vector<int> predicate_to_remove;
 			for (int i = 0; i < s.size(); i++) {
 				if (visited.count(s[i]) == 0) {
-					//If predicate hasn't been encountered before
+					//If Predicate hasn't been encountered before
 					//Mark as visited
 					visited.insert(s[i]);
 				}
 				else {
-					//Else predicate has been encountered before
+					//Else Predicate has been encountered before
 					//Mark for removal
 					predicate_to_remove.push_back(i);
 				}
@@ -736,7 +686,7 @@ private:
 			//Iterate through all predicates of the predicates
 			for (int i = 0; i < s.size(); i++) {
 				argumentList& args = s[i].args;
-				//Iterate through all arguments of the predicate
+				//Iterate through all arguments of the Predicate
 				for (int j = 0; j < args.size(); j++) {
 					if (isVariable(args[j])) {
 						//If argument is a variable then standardize
@@ -783,7 +733,7 @@ private:
 			unsigned long long int loc = data.size() - 1;
 			//Loop through all predicates in the predicates
 			for (int i = 0; i < s.size(); i++) {
-				//Index the predicate
+				//Index the Predicate
 				if (isLiteral(s[i])) {
 					if (!s[i].negated) {
 						index[s[i].name].positive_literals.push_back(pair<unsigned int, unsigned int>(loc, i));
@@ -803,7 +753,7 @@ private:
 			}
 		}
 
-		vector<pair<sentence, unsigned int>> fetch(predicate& p) {
+		vector<pair<sentence, unsigned int>> fetch(Predicate& p) {
 			vector<pair<sentence, unsigned int>> result;
 			vector<pair<unsigned int, unsigned int>> literalIndex;
 			vector<pair<unsigned int, unsigned int>> sentenceIndex;
@@ -881,8 +831,6 @@ public:
 	}
 
 	bool ask(string& query) {
-		//Calculate finish time quota
-		double finishTime = get_wall_time() + maxQueryTime;
 		//Create query into CNF Sentence
 		sentence alpha = CNF::convertToCNFSentences(query)[0];
 		//Negate alpha
@@ -905,15 +853,15 @@ public:
 
 			for (int i = 0; i < currentSentence.size(); i++) {
 
-				//create a resolver predicate by negating the current predicate
-				predicate resolver = currentSentence[i].negate();
-				//Get resolvableSentences for each predicate in the currentSentence
+				//create a resolver Predicate by negating the current Predicate
+				Predicate resolver = currentSentence[i].negate();
+				//Get resolvableSentences for each Predicate in the currentSentence
 				vector<pair<sentence, unsigned int>> resolvableSentences = KB.fetch(resolver);
 				for (int j = 0; j < resolvableSentences.size(); j++) {
 					//Resolve each predicates in the resolvableSentences
 					//Create substitution list
 					unordered_map<string, string> theta;
-					//Find unifiable predicate in the predicates
+					//Find unifiable Predicate in the predicates
 					if (resolvableSentences[j].first[resolvableSentences[j].second].name == currentSentence[i].name &&
 						resolvableSentences[j].first[resolvableSentences[j].second].negated !=
 						currentSentence[i].negated) {
@@ -958,10 +906,6 @@ public:
 							}
 						}
 					}
-				}
-				//Check if allotted time ran out
-				if (get_wall_time() > finishTime) {
-					return false;
 				}
 			}
 		}

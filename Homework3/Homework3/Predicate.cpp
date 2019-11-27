@@ -4,14 +4,17 @@
 Description:
 This function is a constructor;
 Input:
-@ const string& predicateStr: a string denotes a predicate;
+@ const string& predicateStr: a string denotes a predicate_query;
 Output:
-@ Preciate returnValue: a predicate;
+@ Preciate returnValue: a predicate_query;
 */
-Predicate::Predicate(const string& predicate_str) {
+Predicate::Predicate(const string& predicate_str, bool negate) {
+	// remove white space
 	this->predicate_str = predicate_str;
+	this->predicate_str.erase(remove_if(this->predicate_str.begin(), this->predicate_str.end(), isspace), this->predicate_str.end());
 	if (isSyntaxValid()) {
 		this->validity = true;
+		this->negation = negate ? !this->negation : this->negation;
 		PreciateStringSegmentation();
 	}
 	else {
@@ -23,9 +26,9 @@ Predicate::Predicate(const string& predicate_str) {
 Description:
 This function is a constructor;
 Input:
-@ const Predicate& predicate: a predicate object;
+@ const Predicate& predicate_query: a predicate_query object;
 Output:
-@ Predicate returnValie: a predicate;
+@ Predicate returnValie: a predicate_query;
 */
 Predicate::Predicate(const Predicate& predicate) {
 	this->predicate_str = predicate.predicate_str;
@@ -33,7 +36,6 @@ Predicate::Predicate(const Predicate& predicate) {
 	this->action_str = predicate.action_str;
 	this->arguments = predicate.arguments;
 	this->validity = predicate.validity;
-	this->variableNum = predicate.variableNum;
 }
 
 /*
@@ -58,7 +60,7 @@ void Predicate::Print() {
 
 /*
 Description:
-This function is used to return if the current predicate is a valid predicate;
+This function is used to return if the current predicate_query is a valid predicate_query;
 Input:
 @ void parameter: void;
 Output:
@@ -66,6 +68,55 @@ Output:
 */
 bool Predicate::isValid() {
 	return this->validity;
+}
+
+string Predicate::getActionStr() const {
+	return this->action_str;
+	pair<string, string> Unfication(string& query);
+}
+
+map<string, string> Predicate::Unification(Predicate& predicate_query) const {
+
+	auto isVariable = [](const string& argument) {
+		if (argument.size() > 1) return false;
+		if (isupper(argument[0])) return false;
+		return true;
+	};
+
+	map<string, string> variableConstantMap;
+	for (int i = 0; i < arguments.size(); i++) {
+
+		if (isVariable(arguments[i])) {
+			// variable - constant
+			if (variableConstantMap.find(arguments[i]) != variableConstantMap.end()) {
+				variableConstantMap.clear();
+			}
+			variableConstantMap.insert(pair<string, string>(arguments[i], predicate_query.arguments[i]));
+		}
+		else {
+			// constant - constant
+			if (arguments[i] != predicate_query.arguments[i]) {
+				variableConstantMap.clear();
+			}
+		}
+	}
+	return variableConstantMap;
+}
+
+void Predicate::Replace(map<string, string>& variableConstantMap) {
+
+	for (int i = 0; i < arguments.size(); i++) {
+		if (variableConstantMap.find(arguments[i]) != variableConstantMap.end()) {
+			arguments[i] = variableConstantMap[arguments[i]];
+		}
+	}
+	stringstream ss;
+	ss << (this->negation ? "~" : "") << this->action_str << "(";
+	for (int i = 0; i < this->arguments.size() - 1; i++) {
+		ss << arguments[i] << ",";
+	}
+	ss << arguments[arguments.size() - 1] << ")";
+	this->predicate_str = ss.str();
 }
 
 /*
@@ -84,11 +135,11 @@ Predicate& Predicate::operator-() const {
 
 /*
 Description:
-This function is a overwrite of operator< used to compare two predicate used for set sorting;
+This function is a overwrite of operator< used to compare two predicate_query used for set sorting;
 Input:
-@ const Predicate& predicate: righthand predicate;
+@ const Predicate& predicate_query: righthand predicate_query;
 Output:
-@ bool returnValue: if the righthand predicate is less than the left;
+@ bool returnValue: if the righthand predicate_query is less than the left;
 */
 bool Predicate::operator<(const Predicate& predicate) const {
 	return this->predicate_str < predicate.predicate_str;
@@ -105,7 +156,7 @@ Output:
 bool Predicate::operator==(const Predicate& operand) const {
 	if (this->negation != operand.negation) return false;
 	if (this->action_str != operand.action_str) return false;
-	if (this->variableNum != operand.variableNum) return false;
+	if (this->variableIndex.size() != operand.variableIndex.size()) return false;
 	for (size_t i = 0; i < this->arguments.size(); i++) {
 		if (arguments[i] != operand.arguments[i]) {
 			return false;
@@ -116,11 +167,11 @@ bool Predicate::operator==(const Predicate& operand) const {
 
 /*
 Description:
-This function is used to detect if the given predicate_str is a valid predicate string;
+This function is used to detect if the given predicate_str is a valid predicate_query string;
 Input:
 @ void parameter: void;
 Output:
-@ bool returnValie: if the given predicate_str is a valid predicate string;
+@ bool returnValie: if the given predicate_str is a valid predicate_query string;
 */
 bool Predicate::isSyntaxValid() {
 	// illegal characters
@@ -154,7 +205,7 @@ bool Predicate::isSyntaxValid() {
 
 /*
 Description:
-This function is used to split a valid predicate string and get negation mark, action_str string, and arguments
+This function is used to split a valid predicate_query string and get negation mark, action_str string, and arguments
 Input:
 @ void parameter: void;
 Output:
@@ -180,10 +231,14 @@ void Predicate::PreciateStringSegmentation() {
 	while ((pos = predicate_str_copy.find(',')) != string::npos) {
 		string argument = predicate_str_copy.substr(0, pos);
 		this->arguments.push_back(argument);
-		if (argument.size() == 1 && islower(argument[0])) variableNum++; 
+		if (argument.size() == 1 && islower(argument[0])) {
+			variableIndex.insert(this->arguments.size() - 1);
+		}
 		predicate_str_copy.erase(0, pos + 1); // remove argument and comma
 	}
 	this->arguments.push_back(predicate_str_copy); // add last argument
-	if (predicate_str_copy.size() == 1 && islower(predicate_str_copy[0])) variableNum++;
+	if (predicate_str_copy.size() == 1 && islower(predicate_str_copy[0])) {
+		variableIndex.insert(this->arguments.size() - 1);
+	}
 
 }
