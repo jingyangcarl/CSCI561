@@ -24,8 +24,8 @@ public:
 	void Print();
 	bool isValid();
 	string getActionStr() const;
-	int getvariableNum() const;
-	map<string, string> Unification(Predicate& predicate_query) const;
+	int getVariableNum() const;
+	map<string, string> Unification(const Predicate& predicate_query) const;
 	void Replace(map<string, string>& variableConstantMap);
 
 	// operator overwrite

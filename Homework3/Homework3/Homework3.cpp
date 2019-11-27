@@ -64,9 +64,16 @@ int main() {
 		knowledgeBase.Tell(sentence);
 	}
 
-	string predicate_str = "Alert(Bob, NSAIDs)";
-	cout << knowledgeBase.Ask(predicate_str) << endl;
+	ofstream output("output.txt");
+	if (output.is_open()) {
 
+		for (auto& query : input.queries) {
+			string result = (knowledgeBase.Ask(query) ? "TRUE" : "FALSE");
+			cout << result << endl;
+			output << result << endl;
+		}
+	}
+	output.close();
 }
 
 // Run program: Ctrl + F5 or Debug > Start Without Debugging menu

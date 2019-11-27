@@ -2,10 +2,14 @@
 
 DisjunctiveNormalForm::DisjunctiveNormalForm(string& fact_str) {
 	this->dnf_str = fact_str;
-	this->dnf_str.erase(remove_if(this->dnf_str.begin(), this->dnf_str.end(), isspace), this->dnf_str.end());
+	this->dnf_str.erase(remove_if(this->dnf_str.begin(), this->dnf_str.end(), ::isspace), this->dnf_str.end());
 	if (isSyntaxValid()) {
 		Str2DNF();
 	}
+}
+
+DisjunctiveNormalForm::DisjunctiveNormalForm(Predicate& predicate) {
+	this->predicates.insert(predicate);
 }
 
 /*
@@ -49,6 +53,31 @@ DisjunctiveNormalForm& DisjunctiveNormalForm::Unification(string& query) {
 	for (auto& predicate : predicates) {
 		if (predicate.getActionStr() == predicate_query.getActionStr()) {
 			map<string, string> variableConstantMap_temp = predicate.Unification(predicate_query);
+			for (auto& pair : variableConstantMap_temp) {
+				variableConstantMap.insert(pair);
+			}
+		}
+	}
+
+	unifiedDNF->predicates.clear();
+	for (auto& predicate : predicates) {
+		Predicate predicate_unified(predicate);
+		predicate_unified.Replace(variableConstantMap);
+		unifiedDNF->predicates.insert(predicate_unified);
+	}
+
+	unifiedDNF->dnf_str = "";
+	return *unifiedDNF;
+}
+
+DisjunctiveNormalForm& DisjunctiveNormalForm::Unification(const Predicate& predicate) {
+
+	DisjunctiveNormalForm* unifiedDNF = new DisjunctiveNormalForm(*this);
+
+	map<string, string> variableConstantMap;
+	for (auto& predicate : predicates) {
+		if (predicate.getActionStr() == predicate.getActionStr()) {
+			map<string, string> variableConstantMap_temp = predicate.Unification(predicate);
 			for (auto& pair : variableConstantMap_temp) {
 				variableConstantMap.insert(pair);
 			}
@@ -128,8 +157,8 @@ void DisjunctiveNormalForm::Str2DNF() {
 		string consequent_str = dnf_str.substr(pos + 2); // "=>" length is 2
 
 		// move white spaces
-		antecedent_str.erase(remove_if(antecedent_str.begin(), antecedent_str.end(), isspace), antecedent_str.end());
-		consequent_str.erase(remove_if(consequent_str.begin(), consequent_str.end(), isspace), consequent_str.end());
+		antecedent_str.erase(remove_if(antecedent_str.begin(), antecedent_str.end(), ::isspace), antecedent_str.end());
+		consequent_str.erase(remove_if(consequent_str.begin(), consequent_str.end(), ::isspace), consequent_str.end());
 
 		// split antecedent over & and save to the predicates
 		string antecedent_str_copy = antecedent_str;

@@ -15,7 +15,7 @@ protected:
 
 private:
 	set<Predicate> knowledges;
-	vector<DisjunctiveNormalForm> inferenceRule;
+	vector<DisjunctiveNormalForm> inferenceRules;
 
 };
 

@@ -11,7 +11,7 @@ Output:
 Predicate::Predicate(const string& predicate_str, bool negate) {
 	// remove white space
 	this->predicate_str = predicate_str;
-	this->predicate_str.erase(remove_if(this->predicate_str.begin(), this->predicate_str.end(), isspace), this->predicate_str.end());
+	this->predicate_str.erase(remove_if(this->predicate_str.begin(), this->predicate_str.end(), ::isspace), this->predicate_str.end());
 	if (isSyntaxValid()) {
 		this->validity = true;
 		PreciateStringSegmentation();
@@ -75,11 +75,11 @@ string Predicate::getActionStr() const {
 	pair<string, string> Unfication(string& query);
 }
 
-int Predicate::getvariableNum() const {
+int Predicate::getVariableNum() const {
 	return this->variableIndex.size();
 }
 
-map<string, string> Predicate::Unification(Predicate& predicate_query) const {
+map<string, string> Predicate::Unification(const Predicate& predicate_query) const {
 
 	auto isVariable = [](const string& argument) {
 		if (argument.size() > 1) return false;
@@ -217,7 +217,7 @@ Output:
 */
 void Predicate::PreciateStringSegmentation() {
 	// remove white space
-	predicate_str.erase(remove_if(predicate_str.begin(), predicate_str.end(), isspace), predicate_str.end());
+	predicate_str.erase(remove_if(predicate_str.begin(), predicate_str.end(), ::isspace), predicate_str.end());
 	string predicate_str_copy = this->predicate_str;
 
 	// get negation
